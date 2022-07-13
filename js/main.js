@@ -26,7 +26,7 @@ if ( !WebGLCheck.isWebGLAvailable() ) {
 
 window.GAME = GAME;
 
-GAME.state.onPhaseChange = function(phase) {
+GAME.state.onPhaseChange.push( function(phase) {
     switch (phase) {
         case GAME.PHASES.INIT:
             init();
@@ -47,9 +47,7 @@ GAME.state.onPhaseChange = function(phase) {
         case GAME.PHASES.GAME_RESUMED:
             break;
     }
-}
-
-GAME.state.phase = GAME.PHASES.INIT;
+});
 
 let ground = undefined;
 function init() {
@@ -93,29 +91,31 @@ function init() {
 }
 
 function loadStarted() {
-    let processes = 2;
-    // Loading GLTFs
-    let groups = [ FILES.gltfs ];
-    GLTFS.queueFileNames(groups, (function() {
-        let loaded = 0;
-        let total = groups.reduce((prev, curr) => prev + curr.filenames.length, 0);
-        return function(filename, gltf) {
-            GAME.models.add(filename, gltf.scene);
-            // All files loaded?
-            if (++loaded == total) { if (!--processes) { GAME.state.phase = GAME.PHASES.LOAD_COMPLETED; }; }
-        }
-    })());
-    // Loading Sounds
-    groups = [ FILES.sounds ];
-    SOUNDS.queueFileNames(groups, (function() { 
-        let loaded = 0;
-        let total = groups.reduce((prev, curr) => prev + curr.filenames.length, 0);
-        return function(filename, buffer) {
-            GAME.audioBuffers.add(filename, buffer);
-            // All files loaded?
-            if (++loaded == total) { if (!--processes) { GAME.state.phase = GAME.PHASES.LOAD_COMPLETED; }; }
-        }
-    })());
+    // let processes = 2;
+    // // Loading GLTFs
+    // let groups = [ FILES.gltfs ];
+    // GLTFS.queueFileNames(groups, (function() {
+    //     let loaded = 0;
+    //     let total = groups.reduce((prev, curr) => prev + curr.filenames.length, 0);
+    //     return function(filename, gltf) {
+    //         GAME.models.add(filename, gltf.scene);
+    //         // All files loaded?
+    //         if (++loaded == total) { if (!--processes) { GAME.state.phase = GAME.PHASES.LOAD_COMPLETED; }; }
+    //     }
+    // })());
+    // // Loading Sounds
+    // groups = [ FILES.sounds ];
+    // SOUNDS.queueFileNames(groups, (function() { 
+    //     let loaded = 0;
+    //     let total = groups.reduce((prev, curr) => prev + curr.filenames.length, 0);
+    //     return function(filename, buffer) {
+    //         GAME.audioBuffers.add(filename, buffer);
+    //         // All files loaded?
+    //         if (++loaded == total) { if (!--processes) { GAME.state.phase = GAME.PHASES.LOAD_COMPLETED; }; }
+    //     }
+    // })());
+
+    GAME.state.phase = GAME.PHASES.LOAD_COMPLETED;
 }
 
 function loadCompleted() {
