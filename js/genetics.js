@@ -12,6 +12,8 @@ GAME.state.onPhaseChange.push( function(phase) {
             console.log("load completed");
 
             init();
+            testTensorFlow();
+            initNeuralNetwork();
             break;
         case GAME.PHASES.GAME_STARTED:
             break;
@@ -96,38 +98,37 @@ function mutate(chromosome) {
 // https://github.com/subprotocol/genetic-js/blob/f351807c1ee38b9bf8fec357bae3eaa699d62b94/js/genetic-0.1.14.js#L156
 function generation(population, generaionNum, stats) {
     //https://github.com/subprotocol/genetic-js/blob/f351807c1ee38b9bf8fec357bae3eaa699d62b94/js/genetic-0.1.14.js#L149
-    console.log("generation: ", generaionNum, stats.maximum, stats.minimum, stats.mean, stats.stdev, population);
+    //console.log("generation: ", generaionNum, stats.maximum, stats.minimum, stats.mean, stats.stdev, population);
 
     return true;
 }
 
 // https://github.com/subprotocol/genetic-js/blob/f351807c1ee38b9bf8fec357bae3eaa699d62b94/js/genetic-0.1.14.js#L160
 function notification(population, generaionNum, stats, isFinished) {
-
-    console.log("notification: ", generaionNum, isFinished, stats.maximum, stats.minimum, stats.mean, stats.stdev, population);
+    //console.log("notification: ", generaionNum, isFinished, stats.maximum, stats.minimum, stats.mean, stats.stdev, population);
 }
 
-function init() {
-    userData = {
-        // https://github.com/nrsharip/AI-for-Snake-Game/blob/6cd9d65b2a5b0018f772d19849b49c6fce32b76d/trainGeneticAlgorithmMulti.py#L76
-        chroms_per_gen: 200,
-        bits_per_weight: 8,
-    
-        num_inputs: 9,
-        num_hidden_layer_nodes: 10,
-        num_outputs: 4,
-    
-        total_bits: 0,
-    
-        population: undefined,
-    };
-    
-    userData.total_bits = (
-        (userData.num_inputs+1) * userData.num_hidden_layer_nodes 
-        + userData.num_hidden_layer_nodes * (userData.num_hidden_layer_nodes + 1) 
-        + userData.num_outputs * (userData.num_hidden_layer_nodes + 1)
-    ) * userData.bits_per_weight
+userData = {
+    // https://github.com/nrsharip/AI-for-Snake-Game/blob/6cd9d65b2a5b0018f772d19849b49c6fce32b76d/trainGeneticAlgorithmMulti.py#L76
+    chroms_per_gen: 200,
+    bits_per_weight: 8,
 
+    num_inputs: 9,
+    num_hidden_layer_nodes: 10,
+    num_outputs: 4,
+
+    total_bits: 0,
+
+    population: undefined,
+};
+
+userData.total_bits = (
+    (userData.num_inputs+1) * userData.num_hidden_layer_nodes 
+    + userData.num_hidden_layer_nodes * (userData.num_hidden_layer_nodes + 1) 
+    + userData.num_outputs * (userData.num_hidden_layer_nodes + 1)
+) * userData.bits_per_weight
+
+function init() {
     let genetic = Genetic.create();
     console.log(genetic);
 
@@ -182,4 +183,69 @@ function init() {
     // webWorkers            - true - Boolean - Use Web Workers (when available)
     // skip                  - 0 - Real Number - Setting this higher throttles back how frequently genetic.notification gets called in the main thread.
     genetic.evolve(config, userData);
+}
+
+function testTensorFlow() {
+    // https://www.tensorflow.org/js/guide/tensors_operations
+    const a = tf.tensor([[11, 22], [33, 44]]);
+    console.log(a);
+    console.log('a rank:', a.rank);
+    console.log('a shape:', a.shape);
+    console.log('a dtype:', a.dtype);
+    a.print();
+
+    const b = a.reshape([4, 1]);
+    console.log(b);
+    console.log('b rank:', b.rank);
+    console.log('b shape:', b.shape);
+    console.log('b dtype:', b.dtype);
+    b.print();
+
+    const c = tf.tensor([11, 22, 33, 44]);
+    console.log(c);
+    console.log('c rank:', c.rank);
+    console.log('c shape:', c.shape);
+    console.log('c dtype:', c.dtype);
+    c.print();
+
+    // ASYNCHRONOUS
+    // Returns the multi dimensional array of values.
+    a.array().then(array => console.log(array));
+    // Returns the flattened data that backs the tensor.
+    a.data().then(data => console.log(data));
+    // SYNCHRONOUS
+    // Returns the multi dimensional array of values.
+    console.log(a.arraySync());
+    // Returns the flattened data that backs the tensor.
+    console.log(a.dataSync());
+
+    // https://www.tensorflow.org/js/guide/models_and_layers
+    // Create an arbitrary graph of layers, by connecting them via the apply() method.
+    const input = tf.input({shape: [userData.num_inputs]});
+    const dense1 = tf.layers.dense({ units: userData.num_hidden_layer_nodes, activation: 'sigmoid' }).apply(input);
+    const dense2 = tf.layers.dense({ units: userData.num_hidden_layer_nodes, activation: 'sigmoid' }).apply(dense1);
+    const dense3 = tf.layers.dense({ units: userData.num_outputs, activation: 'sigmoid' }).apply(dense2);
+    const model = tf.model({ inputs: input, outputs: dense3 });
+
+    model.summary();
+    console.log(model);
+    console.log(input);
+    console.log(dense1);
+    console.log(dense2);
+    console.log(dense3);
+
+    // https://www.tensorflow.org/js/guide/train_models
+    model.weights.forEach(w => {
+        const newVals = tf.zeros(w.shape); // randomNormal
+        // w.val is an instance of tf.Variable
+        w.val.assign(newVals);
+    });
+
+    model.weights.forEach(w => {
+        console.log(w.name, w.shape, w.val.arraySync());
+    });
+}
+
+function initNeuralNetwork() {
+
 }
