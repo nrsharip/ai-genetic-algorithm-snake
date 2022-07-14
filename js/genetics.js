@@ -1,30 +1,45 @@
-import * as GAME from './game.js'
+let userData = {
+    // https://github.com/nrsharip/AI-for-Snake-Game/blob/6cd9d65b2a5b0018f772d19849b49c6fce32b76d/trainGeneticAlgorithmMulti.py#L76
+    chroms_per_gen: 200,
+    bits_per_weight: 8,
 
-GAME.state.onPhaseChange.push( function(phase) {
-    switch (phase) {
-        case GAME.PHASES.INIT:
-            console.log("init");
-            break;
-        case GAME.PHASES.LOAD_STARTED:
-            console.log("load started");
-            break;
-        case GAME.PHASES.LOAD_COMPLETED:
-            console.log("load completed");
+    num_inputs: 9,
+    num_hidden_layer_nodes: 10,
+    num_outputs: 4,
 
-            init();
-            break;
-        case GAME.PHASES.GAME_STARTED:
-            break;
-        case GAME.PHASES.GAME_PAUSED:
-            break;
-        case GAME.PHASES.GAME_RESUMED:
-            break;
-    }
-});
+    total_bits: 0,
 
-let userData = undefined;
+    population: undefined,
+};
 
-GAME.state.phase = GAME.PHASES.INIT;
+userData.total_bits = (
+    (userData.num_inputs+1) * userData.num_hidden_layer_nodes 
+    + userData.num_hidden_layer_nodes * (userData.num_hidden_layer_nodes + 1) 
+    + userData.num_outputs * (userData.num_hidden_layer_nodes + 1)
+) * userData.bits_per_weight
+
+let config = {
+    // https://github.com/subprotocol/genetic-js#configuration-parameters
+    // size                  - 250 - Real Number - Population size
+    // crossover             - 0.9 - [0.0, 1.0] - Probability of crossover
+    // mutation              - 0.2 - [0.0, 1.0] - Probability of mutation
+    // iterations            - 100 - Real Number - Maximum number of iterations before finishing
+    // fittestAlwaysSurvives - true - Boolean - Prevents losing the best fit between generations
+    // maxResults            - 100 - Real Number - The maximum number of best-fit results that webworkers will send per notification
+    // webWorkers            - true - Boolean - Use Web Workers (when available)
+    // skip                  - 0 - Real Number - Setting this higher throttles back how frequently genetic.notification gets called in the main thread.
+    size: userData.chroms_per_gen,
+    crossover: 1,
+                   // don't confuse probability per chromosome and per gene (bit)
+    mutation: 0.1, // https://github.com/nrsharip/AI-for-Snake-Game/blob/6cd9d65b2a5b0018f772d19849b49c6fce32b76d/helpers/geneticAlgorithm.py#L278
+    iterations: 4,
+    fittestAlwaysSurvives: true,
+    maxResults: 100,
+    webWorkers: true,
+    skip: 2,
+};
+
+let genetic = Genetic.create();
 
 function seed() {
     if (!this.userData) { return undefined; }
@@ -108,29 +123,6 @@ function notification(population, generaionNum, stats, isFinished) {
 }
 
 function init() {
-    userData = {
-        // https://github.com/nrsharip/AI-for-Snake-Game/blob/6cd9d65b2a5b0018f772d19849b49c6fce32b76d/trainGeneticAlgorithmMulti.py#L76
-        chroms_per_gen: 200,
-        bits_per_weight: 8,
-    
-        num_inputs: 9,
-        num_hidden_layer_nodes: 10,
-        num_outputs: 4,
-    
-        total_bits: 0,
-    
-        population: undefined,
-    };
-    
-    userData.total_bits = (
-        (userData.num_inputs+1) * userData.num_hidden_layer_nodes 
-        + userData.num_hidden_layer_nodes * (userData.num_hidden_layer_nodes + 1) 
-        + userData.num_outputs * (userData.num_hidden_layer_nodes + 1)
-    ) * userData.bits_per_weight
-
-    let genetic = Genetic.create();
-    console.log(genetic);
-
     //https://github.com/subprotocol/genetic-js#population-functions
     genetic.seed = seed;       // [R] Called to create an individual, can be of any type (int, float, string, array, object)
     genetic.fitness = fitness; // [R] Computes a fitness score for an individual
@@ -161,25 +153,11 @@ function init() {
     genetic.generation = generation;     // [O] Called for each generation. Return false to terminate end algorithm (ie- if goal state is reached)
     genetic.notification = notification; // [O] Runs in the calling context. All functions other than this one are run in a web worker.
 
-    let config = {
-        size: userData.chroms_per_gen,
-        crossover: 1,
-                       // don't confuse probability per chromosome and per gene (bit)
-        mutation: 0.1, // https://github.com/nrsharip/AI-for-Snake-Game/blob/6cd9d65b2a5b0018f772d19849b49c6fce32b76d/helpers/geneticAlgorithm.py#L278
-        iterations: 4,
-        fittestAlwaysSurvives: true,
-        maxResults: 100,
-        webWorkers: true,
-        skip: 2,
-    };
-    // https://github.com/subprotocol/genetic-js#configuration-parameters
-    // size                  - 250 - Real Number - Population size
-    // crossover             - 0.9 - [0.0, 1.0] - Probability of crossover
-    // mutation              - 0.2 - [0.0, 1.0] - Probability of mutation
-    // iterations            - 100 - Real Number - Maximum number of iterations before finishing
-    // fittestAlwaysSurvives - true - Boolean - Prevents losing the best fit between generations
-    // maxResults            - 100 - Real Number - The maximum number of best-fit results that webworkers will send per notification
-    // webWorkers            - true - Boolean - Use Web Workers (when available)
-    // skip                  - 0 - Real Number - Setting this higher throttles back how frequently genetic.notification gets called in the main thread.
+    
+}
+
+function evolve() {
     genetic.evolve(config, userData);
 }
+
+export { config, userData, init, evolve }
