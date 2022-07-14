@@ -1,14 +1,11 @@
 import * as THREE from 'three';
 
-function makeCube() {
-    const geometry = new THREE.BoxGeometry(1, 1, 1);
+function makeCube(sx, sy, sz, color) {
+    const geometry = new THREE.BoxGeometry(sx, sy, sz);
     // The MeshBasicMaterial is not affected by lights. 
     // Let's change it to a MeshPhongMaterial which is affected by lights.
-    const material = new THREE.MeshPhongMaterial({color: 0x44aa88});
+    const material = new THREE.MeshPhongMaterial({color: color}); // 0x44aa88
     const cube = new THREE.Mesh(geometry, material);
-    cube.position.x = -1;
-    cube.position.y = 0;
-    cube.position.z = 0;
 
     // see https://threejs.org/manual/#en/shadows
     cube.castShadow = true;
