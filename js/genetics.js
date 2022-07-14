@@ -1,5 +1,112 @@
 import * as GAME from './game.js'
 
+let userData = {
+    // https://github.com/nrsharip/AI-for-Snake-Game/blob/6cd9d65b2a5b0018f772d19849b49c6fce32b76d/trainGeneticAlgorithmMulti.py#L76
+    chroms_per_gen: 200,
+    bits_per_weight: 8,
+
+    num_inputs: 9,
+    num_hiddens: 10,
+    num_outputs: 4,
+
+    total_bits: 0,
+
+    population: [],
+    seedNum: 0,
+    generaionNum: 0,
+
+    neuralNetwork: undefined,
+};
+
+userData.total_bits = (
+    (userData.num_inputs + 1) * userData.num_hiddens 
+        + userData.num_hiddens * (userData.num_hiddens + 1) 
+        + userData.num_outputs * (userData.num_hiddens + 1)
+) * userData.bits_per_weight
+
+const neuralNetwork = {
+    init(num_inputs, num_hiddens, num_outputs) {
+        this.num_inputs = num_inputs;
+        this.num_hiddens = num_hiddens;
+        this.num_outputs = num_outputs;
+
+        this.input = tf.input({shape: [num_inputs]});
+        this.dense1 = tf.layers.dense({ units: num_hiddens, activation: 'sigmoid' }).apply(this.input);
+        this.dense2 = tf.layers.dense({ units: num_hiddens, activation: 'sigmoid' }).apply(this.dense1);
+        this.dense3 = tf.layers.dense({ units: num_outputs, activation: 'sigmoid' }).apply(this.dense2);
+        this.model = tf.model({ inputs: this.input, outputs: this.dense3 });
+
+        console.log(this.model);
+    },
+
+    predict(inputs) {
+        // https://stackoverflow.com/questions/44843581/what-is-the-difference-between-model-fit-an-model-evaluate-in-keras
+        // https://stackoverflow.com/questions/71835403/tensorflow-error-expected-dense-dense1-input-to-have-shape-null-3-but-got-arr
+        const prediction = model.predict(tf.tensor([ inputs ]));
+
+        return prediction.arraySync();
+    },
+
+    // https://github.com/nrsharip/AI-for-Snake-Game/blob/6cd9d65b2a5b0018f772d19849b49c6fce32b76d/helpers/neuralNetwork.py#L15
+    mapChrom2Weights(chromosome, bitsPerWeight) {
+        let numInputs = this.num_inputs;
+        let numHiddenLayerNodes = this.num_hiddens;
+        let numOutputs = this.num_outputs;
+
+        // https://www.tensorflow.org/js/guide/train_models
+        // dense layers represent a function that maps the input tensor x to an output tensor y via 
+        // the equation y = Ax + b where A (the kernel) and b (the bias) are parameters of the dense layer.
+        let weightIH1_kernel = [];
+        let weightIH1_bias = [];
+        let weightH1H2_kernel = [];
+        let weightH1H2_bias = [];
+        let weightH2O_kernel = [];
+        let weightH2O_bias = [];
+
+        chromosome = " " + chromosome;
+
+        let hiddenLayer1BitsEnd =                                 (numInputs + 1) * numHiddenLayerNodes * bitsPerWeight;
+        let hiddenLayer2BitsEnd = hiddenLayer1BitsEnd + (numHiddenLayerNodes + 1) * numHiddenLayerNodes * bitsPerWeight;
+        let outputBitsEnd       = hiddenLayer2BitsEnd + (numHiddenLayerNodes + 1) *          numOutputs * bitsPerWeight;
+
+        let index = 1
+        let node_num = 0
+        let numWeightsPerCurNode = 0
+    
+        // While we are still looking at the bits representing wieghts going into hidden layer 1
+        while (index < hiddenLayer1BitsEnd) {
+            let weightBitString = chrom.substring(index, index + bitsPerWeight);
+            // weightList[0] accesses the data for weights going into hidden layer 1
+            //weightList[0][node_num][numWeightsPerCurNode] = bin2Weight(weightBitString)
+            numWeightsPerCurNode +=1
+            // if we are at the end of the bits of weights per this node
+            if (numWeightsPerCurNode == numInputs + 1) {
+                node_num += 1
+                numWeightsPerCurNode = 0
+            }
+            index += bitsPerWeight
+        }
+    },
+
+    binToWeight(binString) {
+        const bitsPerWeight = binString.length;
+
+        const intValue = parseInt(binString, 2);
+
+        // Convert integer to a value between -3 and 3
+        // E.g. bitsPerWeight = 8
+        //  0 ... 128 ... 256
+        // -3 ...  0  ...  3
+        // intValue > 128 : intValue/128 > 1 and <=2 : 3*(intValue/128) > 3 <= 6
+        // intValue < 128 : intValue/128 < 1 and >=0 : 3*(intValue/128) < 3 >= 0
+        const product = 3 / (2 ** (bitsPerWeight - 1));
+
+        const floatValue = intValue * product - 3;
+
+        return floatValue;
+    }
+}
+
 GAME.state.onPhaseChange.push( function(phase) {
     switch (phase) {
         case GAME.PHASES.INIT:
@@ -11,9 +118,11 @@ GAME.state.onPhaseChange.push( function(phase) {
         case GAME.PHASES.LOAD_COMPLETED:
             console.log("load completed");
 
-            init();
-            testTensorFlow();
-            neuralNetwork.init();
+            neuralNetwork.init(userData.num_inputs, userData.num_hiddens, userData.num_outputs);
+            userData.neuralNetwork = neuralNetwork;
+
+            geneticInit();
+            //testTensorFlow();
             break;
         case GAME.PHASES.GAME_STARTED:
             break;
@@ -23,8 +132,6 @@ GAME.state.onPhaseChange.push( function(phase) {
             break;
     }
 });
-
-let userData = undefined;
 
 GAME.state.phase = GAME.PHASES.INIT;
 
@@ -37,11 +144,18 @@ function seed() {
         let bit = Math.floor(Math.random() * 2);
         chromosome += bit;
     }
+
+    this.userData.population.push(chromosome);
+    this.userData.seedNum++;
+
     return chromosome
 }
 
 function fitness(chromosome) {
+    this.userData.neuralNetwork.mapChrom2Weights(chromosome, this.userData.bits_per_weight);
+
     // put the game loop here...
+
     let fitness = Math.random() * 5;
 
     return fitness
@@ -98,7 +212,12 @@ function mutate(chromosome) {
 // https://github.com/subprotocol/genetic-js/blob/f351807c1ee38b9bf8fec357bae3eaa699d62b94/js/genetic-0.1.14.js#L156
 function generation(population, generaionNum, stats) {
     //https://github.com/subprotocol/genetic-js/blob/f351807c1ee38b9bf8fec357bae3eaa699d62b94/js/genetic-0.1.14.js#L149
-    //console.log("generation: ", generaionNum, stats.maximum, stats.minimum, stats.mean, stats.stdev, population);
+    console.log("generation: ", generaionNum, stats.maximum, stats.minimum, stats.mean, stats.stdev, population);
+
+    this.userData.generaionNum++;
+
+    this.userData.population.length = 0;
+    this.userData.seedNum = 0;
 
     return true;
 }
@@ -108,27 +227,7 @@ function notification(population, generaionNum, stats, isFinished) {
     //console.log("notification: ", generaionNum, isFinished, stats.maximum, stats.minimum, stats.mean, stats.stdev, population);
 }
 
-userData = {
-    // https://github.com/nrsharip/AI-for-Snake-Game/blob/6cd9d65b2a5b0018f772d19849b49c6fce32b76d/trainGeneticAlgorithmMulti.py#L76
-    chroms_per_gen: 200,
-    bits_per_weight: 8,
-
-    num_inputs: 9,
-    num_hidden_layer_nodes: 10,
-    num_outputs: 4,
-
-    total_bits: 0,
-
-    population: undefined,
-};
-
-userData.total_bits = (
-    (userData.num_inputs+1) * userData.num_hidden_layer_nodes 
-    + userData.num_hidden_layer_nodes * (userData.num_hidden_layer_nodes + 1) 
-    + userData.num_outputs * (userData.num_hidden_layer_nodes + 1)
-) * userData.bits_per_weight
-
-function init() {
+function geneticInit() {
     let genetic = Genetic.create();
     console.log(genetic);
 
@@ -167,11 +266,11 @@ function init() {
         crossover: 1,
                        // don't confuse probability per chromosome and per gene (bit)
         mutation: 0.1, // https://github.com/nrsharip/AI-for-Snake-Game/blob/6cd9d65b2a5b0018f772d19849b49c6fce32b76d/helpers/geneticAlgorithm.py#L278
-        iterations: 4,
+        iterations: 1,
         fittestAlwaysSurvives: true,
         maxResults: 100,
-        webWorkers: true,
-        skip: 2,
+        webWorkers: false,
+        skip: 0,
     };
     // https://github.com/subprotocol/genetic-js#configuration-parameters
     // size                  - 250 - Real Number - Population size
@@ -259,15 +358,5 @@ function testTensorFlow() {
     // (3*2 + 2*4 + 1*6) = 20
     // 14 * 7 + 20 * 8 = 258
     console.log(prediction.arraySync());
-}
-
-const neuralNetwork = {
-    init() {
-        this.input = tf.input({shape: [userData.num_inputs]});
-        this.dense1 = tf.layers.dense({ units: userData.num_hidden_layer_nodes, activation: 'sigmoid' }).apply(this.input);
-        this.dense2 = tf.layers.dense({ units: userData.num_hidden_layer_nodes, activation: 'sigmoid' }).apply(this.dense1);
-        this.dense3 = tf.layers.dense({ units: userData.num_outputs, activation: 'sigmoid' }).apply(this.dense2);
-        this.model = tf.model({ inputs: this.input, outputs: this.dense3 });
-    }
 }
 
