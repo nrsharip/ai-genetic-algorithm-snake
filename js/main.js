@@ -49,6 +49,8 @@ GAME.state.onPhaseChange.push( function(phase) {
     }
 });
 
+GAME.state.phase = GAME.PHASES.INIT;
+
 let ground = undefined;
 function init() {
     GAME.state.stats = new Stats();
