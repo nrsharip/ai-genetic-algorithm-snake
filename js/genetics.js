@@ -13,7 +13,7 @@ GAME.state.onPhaseChange.push( function(phase) {
 
             init();
             testTensorFlow();
-            initNeuralNetwork();
+            neuralNetwork.init();
             break;
         case GAME.PHASES.GAME_STARTED:
             break;
@@ -221,18 +221,16 @@ function testTensorFlow() {
 
     // https://www.tensorflow.org/js/guide/models_and_layers
     // Create an arbitrary graph of layers, by connecting them via the apply() method.
-    const input = tf.input({shape: [userData.num_inputs]});
-    const dense1 = tf.layers.dense({ units: userData.num_hidden_layer_nodes, activation: 'sigmoid' }).apply(input);
-    const dense2 = tf.layers.dense({ units: userData.num_hidden_layer_nodes, activation: 'sigmoid' }).apply(dense1);
-    const dense3 = tf.layers.dense({ units: userData.num_outputs, activation: 'sigmoid' }).apply(dense2);
-    const model = tf.model({ inputs: input, outputs: dense3 });
+    const input = tf.input({shape: [3]});
+    const dense1 = tf.layers.dense({ units: 2, activation: 'relu' }).apply(input);
+    const dense2 = tf.layers.dense({ units: 1, activation: 'relu' }).apply(dense1);
+    const model = tf.model({ inputs: input, outputs: dense2 });
 
     model.summary();
     console.log(model);
     console.log(input);
     console.log(dense1);
     console.log(dense2);
-    console.log(dense3);
 
     // https://www.tensorflow.org/js/guide/train_models
     model.weights.forEach(w => {
@@ -242,10 +240,34 @@ function testTensorFlow() {
     });
 
     model.weights.forEach(w => {
-        console.log(w.name, w.shape, w.val.arraySync());
+        console.log(" * ", w.name, w.shape, w.val.arraySync());
     });
+
+    console.log(model.weights[0].shape);
+    console.log(model.weights[2].shape);
+    model.weights[0].val.assign(tf.tensor([[1, 2], [3, 4], [5, 6]]));
+    model.weights[2].val.assign(tf.tensor([[7], [8]]));
+
+    model.weights.forEach(w => {
+        console.log(" $ ", w.val.arraySync());
+    });
+
+    // https://stackoverflow.com/questions/44843581/what-is-the-difference-between-model-fit-an-model-evaluate-in-keras
+    // https://stackoverflow.com/questions/71835403/tensorflow-error-expected-dense-dense1-input-to-have-shape-null-3-but-got-arr
+    const prediction = model.predict(tf.tensor([[3, 2, 1]]));
+    // (3*1 + 2*3 + 1*5) = 14
+    // (3*2 + 2*4 + 1*6) = 20
+    // 14 * 7 + 20 * 8 = 258
+    console.log(prediction.arraySync());
 }
 
-function initNeuralNetwork() {
-
+const neuralNetwork = {
+    init() {
+        this.input = tf.input({shape: [userData.num_inputs]});
+        this.dense1 = tf.layers.dense({ units: userData.num_hidden_layer_nodes, activation: 'sigmoid' }).apply(this.input);
+        this.dense2 = tf.layers.dense({ units: userData.num_hidden_layer_nodes, activation: 'sigmoid' }).apply(this.dense1);
+        this.dense3 = tf.layers.dense({ units: userData.num_outputs, activation: 'sigmoid' }).apply(this.dense2);
+        this.model = tf.model({ inputs: this.input, outputs: this.dense3 });
+    }
 }
+
