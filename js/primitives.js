@@ -51,6 +51,7 @@ function makeGround(w, h, d) {
 }
 
 export {
-    makeCube,
+    makeBox,
+    makeSphere,
     makeGround
 }

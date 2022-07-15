@@ -1,214 +1,186 @@
+import * as THREE from 'three';
+import * as GAME from '../game.js';
+
+import Snake from './snake.js';
+
+const tmpV3$1 = new THREE.Vector3();
+const tmpV3$2 = new THREE.Vector3();
+const tmpV3$3 = new THREE.Vector3();
+
+//https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random
+function getRandomInt(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min) + min); //The maximum is exclusive and the minimum is inclusive
+}
+
 export default class SnakeGame {
-	constructor( fps) {
-		this.width = 500
-		this.height = 600
-		this.grid_start_y = 100
-		//this.win = pygame.display.set_mode((this.width, this.height)) //nrsharip uncomment
-		this.play = True
-		this.restart = False
-		//this.clock = pygame.time.Clock() //nrsharip uncomment
-		this.fps = fps
-		this.rows = 10
-		this.cols = this.rows
-		this.snake = Snake(this.rows,this.cols)
-		this.fruit_pos = (0,0)
-		this.generate_fruit()
-		this.score = 0
-		this.high_score = 0
+    constructor(delay) {
+        this.width = 500
+        this.height = 600
+        this.grid_start_y = 100
+
+        this.play = true
+        this.restart = false
+
+        this.delay = delay;
+        this.elapsed = 0;
+
+        this.rows = 10
+        this.cols = this.rows
+        this.snake = new Snake(this.rows, this.cols);
+
+        this.fruit_pos = { x: 0, y: 0 }
+        this.generate_fruit()
+        
+        this.score = 0
+        this.high_score = 0
     }
 
-	redraw_window (self) {
-
-		this.win.fill(pygame.Color(10, 49, 245))
-		this.draw_data_window()
-		this.draw_grid()
-		this.draw_grid_updates()
-		pygame.display.update()
+    redraw_window (self) {
+        this.draw_grid_updates()
     }
 
-	draw_data_window (self) {
+    generate_fruit () {
+        let fruit_row = undefined;
+        let fruit_col = undefined;
 
-		pygame.draw.rect(this.win, pygame.Color(20, 20, 20), (0,0,this.width, this.grid_start_y))
-
-		//Add the score and high score
-		font = pygame.font.SysFont('calibri', 20)
-		score_text = font.render('Score: ' + str(this.score),1, (255,255,255))
-		high_score_text = font.render('High Score: ' + str(this.high_score), 1, (255,255,255))
-		this.win.blit(score_text, (30, 50))
-		this.win.blit(high_score_text, (this.width - 140, 50))
-    }
-	draw_grid (self) {
-
-		space_col = this.width//this.cols
-		space_row = (this.height - this.grid_start_y)//this.rows
-
-		for (let i in range(this.rows)) { // CHECK
-			//draw horizontal line
-			pygame.draw.line(this.win, pygame.Color(100,100,100), (0, space_row*i + this.grid_start_y),  (this.width, space_row*i + this.grid_start_y))
-        }
-		for (let i in range(this.cols)) { // CHECK
-			//draw vertical line
-			pygame.draw.line(this.win, pygame.Color(100,100,100), (space_col*i, this.grid_start_y), (space_col*i, this.height))
-        }
-		//draw last lines so they are not cut off
-		pygame.draw.line(this.win, pygame.Color(100,100,100), (space_col*this.rows-2, this.grid_start_y), (space_col*this.rows-2, this.height))
-		pygame.draw.line(this.win, pygame.Color(100,100,100), (0, this.height -2),  (this.width, this.height -2))
-    }
-
-	generate_fruit (self) {
-
-		fruit_row = random.randrange(0,this.rows)
-		fruit_col = random.randrange(0,this.cols)
-
-		//Continually generate a location for the fruit until it is not in the snake's body
-		while ((fruit_row, fruit_col) in this.snake.body) { // CHECK
-			fruit_row = random.randrange(0,this.rows)
-			fruit_col = random.randrange(0,this.cols)
-        }
-		this.fruit_pos = (fruit_row,fruit_col)
-    }
-	move_snake (self) {
-		keys = pygame.key.get_pressed()
-
-		//Determine which arrow key the user selected
-		if (keys[pygame.K_LEFT]) {
-			direct = "left"
-		} else if (keys[pygame.K_UP]) {
-			direct = "up"
-		} else if (keys[pygame.K_RIGHT]) {
-			direct = "right"
-		} else if (keys[pygame.K_DOWN]) {
-			direct = "down"
-		} else {
-			if (len(this.snake.directions) == 0) {
-				//Move right at beginning of game
-				direct = "right"
-			} else {
-				//Otherwise continue with previous direction if no key pressed
-				direct = this.snake.directions[0]
+        while (!fruit_row && !fruit_col) {
+            fruit_row = getRandomInt(0, this.rows)
+            fruit_col = getRandomInt(0, this.cols)
+    
+            for (let position of this.snake.body) {
+                if (fruit_row == position.x && fruit_col == position.y) {
+                    fruit_row = undefined;
+                    fruit_col = undefined;
+                }
             }
         }
-		this.snake.directions.appendleft(direct)
-		if (len(this.snake.directions) > len(this.snake.body)) {
-			this.snake.directions.pop()
-        }
-		this.snake.update_body_positions()
+
+        this.fruit_pos.x = fruit_row;
+        this.fruit_pos.y = fruit_col;
     }
 
-	draw_grid_updates (self) {
-		space_col = this.width//this.cols
-		space_row = (this.height - this.grid_start_y)//this.rows
+    move_snake (keys) {
+        //keys = pygame.key.get_pressed()
 
-		//Draw the fruit
-		fruit_y = this.fruit_pos[0]
-		fruit_x = this.fruit_pos[1]
-		pygame.draw.rect(this.win, pygame.Color(250,30,30), (space_col*fruit_x+1, this.grid_start_y + space_row*fruit_y+1, space_col-1, space_row-1))
+        let direct;
 
-		//Draw the updated snake since last movement
-		for (let pos in this.snake.body) { // CHECK
-			pos_y = pos[0]
-			pos_x = pos[1]
-			
-			pygame.draw.rect(this.win, pygame.Color(31,240,12), (space_col*pos_x+1, this.grid_start_y + space_row*pos_y+1, space_col-1, space_row-1))
+        //Determine which arrow key the user selected
+        if (keys[0] == 'ArrowLeft') {
+            direct = "left"
+        } else if (keys[0] == 'ArrowUp') {
+            direct = "up"
+        } else if (keys[0] == 'ArrowRight') {
+            direct = "right"
+        } else if (keys[0] == 'ArrowDown') {
+            direct = "down"
+        } else {
+            if (this.snake.directions.length == 0) {
+                direct = "right" //Move right at beginning of game
+            } else {
+                direct = this.snake.directions[0] //Otherwise continue with previous direction if no key pressed
+            }
         }
-		head = this.snake.body[0]
-		head_y = head[0]
-		head_x = head[1]
-		head_dir = this.snake.directions[0]
+        // https://stackoverflow.com/questions/8073673/how-can-i-add-new-array-elements-at-the-beginning-of-an-array-in-javascript
+        this.snake.directions.unshift(direct)
+        if (this.snake.directions.length > this.snake.body.length) {
+            this.snake.directions.pop();
+        }
+        this.snake.update_body_positions()
+    }
 
-		//Draw eyes on the head of the snake, determining which direction they should face
+    draw_grid_updates() {
+        GAME.managers.releaseAllInstances();
 
-		//if head facing left
-		if (head_dir == "left") {
-			//draw left eye
-			pygame.draw.circle(this.win, pygame.Color(100,100,100), (space_col*head_x+space_col/10, this.grid_start_y + space_row*head_y + (space_row*4)/5), 2)
-			//draw right eye
-			pygame.draw.circle(this.win, pygame.Color(100,100,100), (space_col*head_x+space_col/10, this.grid_start_y + space_row*head_y + space_row/5), 2)
-		//if head facing up
-		} else if (head_dir == "up") {
-			//draw left eye
-			pygame.draw.circle(this.win, pygame.Color(100,100,100), (space_col*head_x+space_col/5, this.grid_start_y + space_row*head_y + space_row/10), 2)
-			//draw right eye
-			pygame.draw.circle(this.win, pygame.Color(100,100,100), (space_col*head_x+(space_col*4)/5, this.grid_start_y + space_row*head_y + space_row/10), 2)
-		//if head facing right
-		} else if (head_dir == "right") {
-			//draw left eye
-			pygame.draw.circle(this.win, pygame.Color(100,100,100), (space_col*head_x+(space_col*9)/10, this.grid_start_y + space_row*head_y + space_row/5), 2)
-			//draw right eye
-			pygame.draw.circle(this.win, pygame.Color(100,100,100), (space_col*head_x+(space_col*9)/10, this.grid_start_y + space_row*head_y + (space_row*4)/5), 2)
-		//if head is facing down
-		} else {
-			//draw left eye
-			pygame.draw.circle(this.win, pygame.Color(100,100,100), (space_col*head_x+space_col/5, this.grid_start_y + space_row*head_y + (space_row*9)/10), 2)
-			//draw right eye
-			pygame.draw.circle(this.win, pygame.Color(100,100,100), (space_col*head_x+(space_col*4)/5, this.grid_start_y + space_row*head_y + (space_row*9)/10), 2)
+        //Draw the fruit
+        let fruit_z = this.fruit_pos.x + 0.5 - 5;
+        let fruit_x = this.fruit_pos.y + 0.5 - 5;
+
+        GAME.managers.cubeRed.addInstanceTo(GAME.graphics.scene, tmpV3$1.set(fruit_x, 0, fruit_z));
+        //console.log(this.fruit_pos.x, this.fruit_pos.y, tmpV3$1.x, tmpV3$1.y, tmpV3$1.z);
+
+        let pos_x;
+        let pos_z;
+
+        //Draw the updated snake since last movement
+        for (let pos of this.snake.body) { // CHECK
+            pos_z = pos.x + 0.5 - 5;
+            pos_x = pos.y + 0.5 - 5;
+            GAME.managers.cubeGreen.addInstanceTo(GAME.graphics.scene, tmpV3$1.set(pos_x, 0, pos_z));
+        }
+            
+        let head = this.snake.body[0];
+        let head_z = head.x + 0.5 - 5;
+        let head_x = head.y + 0.5 - 5;
+        let head_dir = this.snake.directions[0]
+		//console.log(head_dir);
+
+        //Draw eyes on the head of the snake, determining which direction they should face
+        if (head_dir == "left") { //if head facing left
+			GAME.managers.sphereBlack.addInstanceTo(GAME.graphics.scene, tmpV3$1.set(head_x - 0.5, 0.65, head_z + 0.3));
+			GAME.managers.sphereBlack.addInstanceTo(GAME.graphics.scene, tmpV3$1.set(head_x - 0.5, 0.65, head_z - 0.3));
+        } else if (head_dir == "up") { //if head facing up
+			GAME.managers.sphereBlack.addInstanceTo(GAME.graphics.scene, tmpV3$1.set(head_x + 0.3, 0.65, head_z - 0.5));
+			GAME.managers.sphereBlack.addInstanceTo(GAME.graphics.scene, tmpV3$1.set(head_x - 0.3, 0.65, head_z - 0.5));
+        } else if (head_dir == "right") { //if head facing right
+			GAME.managers.sphereBlack.addInstanceTo(GAME.graphics.scene, tmpV3$1.set(head_x + 0.5, 0.65, head_z + 0.3));
+			GAME.managers.sphereBlack.addInstanceTo(GAME.graphics.scene, tmpV3$1.set(head_x + 0.5, 0.65, head_z - 0.3));
+		} else { //if head is facing down
+			GAME.managers.sphereBlack.addInstanceTo(GAME.graphics.scene, tmpV3$1.set(head_x + 0.3, 0.65, head_z + 0.5));
+			GAME.managers.sphereBlack.addInstanceTo(GAME.graphics.scene, tmpV3$1.set(head_x - 0.3, 0.65, head_z + 0.5));
+		}
+    }
+
+    check_collisions () {
+        this.check_fruit_collision()
+        this.check_wall_collision()
+        this.check_body_collision()
+    }
+
+    check_fruit_collision () {
+        //If we found a fruit
+        if (this.snake.body[0] == this.fruit_pos) {
+            //Add the new body square to the tail of the snake
+            this.snake.extend_snake()
+            //Generate a new fruit in a random position
+            this.generate_fruit()
+
+            this.score += 1
         }
     }
 
-	check_collisions (self) {
+    check_wall_collision () {
+        //Only need to check the colisions of the head of the snake
+        head = this.snake.body[0]
+        head_y = head[0]
+        head_x = head[1]
 
-		this.check_fruit_collision()
-		this.check_wall_collision()
-		this.check_body_collision()
-    }
-
-	check_fruit_collision (self) {
-
-		//If we found a fruit
-		if (this.snake.body[0] == this.fruit_pos) {
-			//Add the new body square to the tail of the snake
-			this.snake.extend_snake()
-			//Generate a new fruit in a random position
-			this.generate_fruit()
-
-			this.score += 1
+        //If there is a wall collision, game over
+        if (head_x == this.cols || head_y == this.rows || head_x < 0 || head_y < 0) {
+            this.game_over()
         }
     }
 
-	check_wall_collision (self) {
-		//Only need to check the colisions of the head of the snake
-		head = this.snake.body[0]
-		head_y = head[0]
-		head_x = head[1]
+    check_body_collision () {
+        if (len(this.snake.body) > 1) {
+            //Only need to check the colisions of the head of the snake
+            head = this.snake.body[0];
+            body_without_head = this.snake.body.slice(1);
 
-		//If there is a wall collision, game over
-		if (head_x == this.cols || head_y == this.rows || head_x < 0 || head_y < 0) {
-			this.game_over()
-        }
-    }
-
-	check_body_collision (self) {
-
-		if (len(this.snake.body) > 1) {
-			//Only need to check the colisions of the head of the snake
-			head = this.snake.body[0];
-			body_without_head = this.snake.body.slice(1);
-
-			if (head in body_without_head) {
-				this.game_over()
+            if (head in body_without_head) {
+                this.game_over()
             }
         }
     }
 
-	event_handler (self) {
-
-		for (let event in pygame.event.get()) { // CHECK
-			//Check if user has quit the game
-			if (event.type == pygame.QUIT) {
-				this.run = False
-				pygame.quit()
-				quit()
-            }
+    game_over () {
+        this.snake = Snake(this.rows, this.cols)
+        this.generate_fruit()
+        this.restart = true
+        if (this.score > this.high_score) {
+            this.high_score = this.score
         }
-    }
-
-	game_over (self) {
-		this.snake = Snake(this.rows,this.cols)
-		this.generate_fruit()
-		this.restart = True
-		if (this.score > this.high_score) {
-			this.high_score = this.score
-        }
-		this.score = 0
+        this.score = 0
     }
 }

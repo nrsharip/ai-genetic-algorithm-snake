@@ -1,5 +1,9 @@
 import * as GAME from './game.js';
 
+import SnakeGame from './AI-for-Snake-Game/snakeGame.js';
+
+const snakeGame = new SnakeGame(1000);
+
 GAME.state.onPhaseChange.push( function(phase) {
     switch (phase) {
         case GAME.PHASES.INIT:
@@ -22,23 +26,23 @@ GAME.state.onPhaseChange.push( function(phase) {
     }
 });
 
+const keys = []
+
 GAME.callbacks.onUpdate = function(delta, elapsed) {
+    
+    if (elapsed - snakeGame.elapsed > snakeGame.delay) {
+        snakeGame.elapsed = elapsed
+
+        snakeGame.move_snake(keys);
+        snakeGame.draw_grid_updates();
+
+        keys.length = 0;
+    }
 
 }
 
 GAME.callbacks.onKeyDown = function(event) {
-    switch (event.code) {
-        case 'Escape':
-            break;
-        case 'ArrowLeft':
-            break;
-        case 'ArrowRight':
-            break;
-        case 'ArrowUp':
-            break;
-        case 'ArrowDown':
-            break;
-    }
+    keys.push(event.code);
 }
 
 GAME.state.phase = GAME.PHASES.INIT;

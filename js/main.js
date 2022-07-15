@@ -17,6 +17,10 @@ import * as PRIMITIVES from './primitives.js'
 import * as UTILS from './utils.js'
 import WebGLCheck from './lib/WebGL.js';
 
+import cubeGreen from './objects/cubeGreen.js';
+import cubeRed from './objects/cubeRed.js';
+import sphereBlack from './objects/sphereBlack.js';
+
 // see https://threejs.org/docs/index.html#manual/en/introduction/WebGL-compatibility-check
 if ( !WebGLCheck.isWebGLAvailable() ) {
     const warning = WebGLCheck.getWebGLErrorMessage();
@@ -34,10 +38,11 @@ GAME.state.onPhaseChange.push( function(phase) {
             break;
         case GAME.PHASES.LOAD_STARTED:
             loadStarted();
-            requestAnimationFrame( render );
             break;
         case GAME.PHASES.LOAD_COMPLETED:
             loadCompleted();
+
+            requestAnimationFrame( render );
             break;
         case GAME.PHASES.GAME_STARTED:
             gameStarted();
@@ -59,6 +64,8 @@ function init() {
     GAME.graphics.renderer = GRAPHICS.setupRenderer('#mainCanvas');
     GAME.graphics.camera = GRAPHICS.setupPerspectiveCamera('#mainCanvas', UTILS.tmpV1.set(0, 15, 0), UTILS.tmpV2.set(0, 0, 0));
     GAME.graphics.camera.frustum = UTILS.getCameraFrustum(GAME.graphics.camera);
+    //GAME.graphics.camera.rotateY(Math.PI / 2);
+    //GAME.graphics.camera.lookAt(0, 0, 0);
     GAME.graphics.scene = GRAPHICS.setupScene('#96b0bc'); // https://encycolorpedia.com/96b0bc
     GAME.graphics.clock = new THREE.Clock();
     //GAME.graphics.orbitControls = GRAPHICS.setupOrbitControls(GAME.graphics.camera, GAME.graphics.renderer, 0, 0, 0);
@@ -119,6 +126,17 @@ function loadStarted() {
 }
 
 function loadCompleted() {
+    let obj3d;
+    GAME.models.add("cube_green", obj3d = PRIMITIVES.makeBox(1, 1, 1, 0x44aa88));
+    obj3d["userData"].filename = "cube_green";
+    GAME.models.add("cube_red", obj3d = PRIMITIVES.makeBox(1, 1, 1, 0xFF2222));
+    obj3d["userData"].filename = "cube_red";
+    GAME.models.add("sphere_black", obj3d = PRIMITIVES.makeSphere(0.1, 12, 7, 0x000000));
+    obj3d["userData"].filename = "sphere_black";
+
+    cubeGreen.createInstances(1, 1000);
+    cubeRed.createInstances(1, 10);
+    sphereBlack.createInstances(1, 10);
 
     spreadSounds();
 
