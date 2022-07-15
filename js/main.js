@@ -49,8 +49,6 @@ GAME.state.onPhaseChange.push( function(phase) {
     }
 });
 
-GAME.state.phase = GAME.PHASES.INIT;
-
 let ground = undefined;
 function init() {
     GAME.state.stats = new Stats();
@@ -117,7 +115,7 @@ function loadStarted() {
     //     }
     // })());
 
-    GAME.state.phase = GAME.PHASES.LOAD_COMPLETED;
+    setTimeout(() => GAME.state.phase = GAME.PHASES.LOAD_COMPLETED, 100);
 }
 
 function loadCompleted() {

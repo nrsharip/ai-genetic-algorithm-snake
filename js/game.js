@@ -16,6 +16,7 @@ const PHASES = {
     GAME_STARTED: 4,
     GAME_PAUSED: 5,
     GAME_RESUMED: 6,
+    GAME_OVER: 7,
 
     getKey(value) { return Object.keys(this).find(key => this[key] === value) }
 }
