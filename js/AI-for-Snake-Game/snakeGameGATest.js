@@ -24,7 +24,7 @@ export default class SnakeGameGATest extends SnakeGame {
         }
     }	
 	
-	move_snake () {
+	move_snake (keys) {
 		const head = this.snake.body[0]
 
 		// Get the manhattan ditance of the fruit from the head if it moves in each direction
