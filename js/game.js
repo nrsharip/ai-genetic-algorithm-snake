@@ -149,9 +149,14 @@ const view = {
     }
 }
 
+const callbacks = {
+    onUpdate: undefined,
+    onKeyDown: undefined,
+}
+
 const player = {};
 const time = { delta: 0, elapsed: 0 };
 
 const yuka = {}
 
-export { graphics, PHASES, state, models, instances, audioListener, audioBuffers, sounds, managers, view, player, time, yuka }
+export { graphics, PHASES, state, models, instances, audioListener, audioBuffers, sounds, managers, view, callbacks, player, time, yuka }

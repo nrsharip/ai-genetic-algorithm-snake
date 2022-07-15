@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 
-function makeCube(sx, sy, sz, color) {
+function makeBox(sx, sy, sz, color) {
     const geometry = new THREE.BoxGeometry(sx, sy, sz);
     // The MeshBasicMaterial is not affected by lights. 
     // Let's change it to a MeshPhongMaterial which is affected by lights.
@@ -12,6 +12,20 @@ function makeCube(sx, sy, sz, color) {
     cube.receiveShadow = true;
 
     return cube;
+}
+
+function makeSphere(radius, widthSegments, heightSegments, color) {
+    const geometry = new THREE.SphereGeometry(radius, widthSegments, heightSegments);
+    // The MeshBasicMaterial is not affected by lights. 
+    // Let's change it to a MeshPhongMaterial which is affected by lights.
+    const material = new THREE.MeshPhongMaterial({color: color}); // 0x44aa88
+    const sphere = new THREE.Mesh(geometry, material);
+
+    // see https://threejs.org/manual/#en/shadows
+    sphere.castShadow = true;
+    sphere.receiveShadow = true;
+
+    return sphere;
 }
 
 function makeGround(w, h, d) {
