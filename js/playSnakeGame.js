@@ -30,7 +30,7 @@ const keys = []
 
 GAME.callbacks.onUpdate = function(delta, elapsed) {
     
-    if (elapsed - snakeGame.elapsed > snakeGame.delay) {
+    if (snakeGame.elapsed == 0 || (elapsed - snakeGame.elapsed > snakeGame.delay)) {
         snakeGame.elapsed = elapsed
 
         snakeGame.move_snake(keys);

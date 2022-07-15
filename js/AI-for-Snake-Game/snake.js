@@ -8,8 +8,8 @@ export default class Snake {
     }
 
     initialize_snake () {
-        let snake_row = this.rows / 2
-        let snake_col = 1
+        let snake_row = this.rows / 2;
+        let snake_col = this.cols / 2;
 
         return { x: snake_row, y: snake_col }
     }

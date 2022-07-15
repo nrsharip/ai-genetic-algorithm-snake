@@ -16,10 +16,6 @@ function getRandomInt(min, max) {
 
 export default class SnakeGame {
     constructor(delay) {
-        this.width = 500
-        this.height = 600
-        this.grid_start_y = 100
-
         this.play = true
         this.restart = false
 
@@ -78,7 +74,7 @@ export default class SnakeGame {
             direct = "down"
         } else {
             if (this.snake.directions.length == 0) {
-                direct = "right" //Move right at beginning of game
+                direct = "down" // Move "down" at beginning of game
             } else {
                 direct = this.snake.directions[0] //Otherwise continue with previous direction if no key pressed
             }
@@ -118,16 +114,16 @@ export default class SnakeGame {
 		//console.log(head_dir);
 
         //Draw eyes on the head of the snake, determining which direction they should face
-        if (head_dir == "left") { //if head facing left
+        if (head_dir == "left") { // if head facing left
 			GAME.managers.sphereBlack.addInstanceTo(GAME.graphics.scene, tmpV3$1.set(head_x - 0.5, 0.65, head_z + 0.3));
 			GAME.managers.sphereBlack.addInstanceTo(GAME.graphics.scene, tmpV3$1.set(head_x - 0.5, 0.65, head_z - 0.3));
-        } else if (head_dir == "up") { //if head facing up
+        } else if (head_dir == "up") { // if head facing up
 			GAME.managers.sphereBlack.addInstanceTo(GAME.graphics.scene, tmpV3$1.set(head_x + 0.3, 0.65, head_z - 0.5));
 			GAME.managers.sphereBlack.addInstanceTo(GAME.graphics.scene, tmpV3$1.set(head_x - 0.3, 0.65, head_z - 0.5));
-        } else if (head_dir == "right") { //if head facing right
+        } else if (head_dir == "right") { // if head facing right
 			GAME.managers.sphereBlack.addInstanceTo(GAME.graphics.scene, tmpV3$1.set(head_x + 0.5, 0.65, head_z + 0.3));
 			GAME.managers.sphereBlack.addInstanceTo(GAME.graphics.scene, tmpV3$1.set(head_x + 0.5, 0.65, head_z - 0.3));
-		} else { //if head is facing down
+		} else { // if head is facing down
 			GAME.managers.sphereBlack.addInstanceTo(GAME.graphics.scene, tmpV3$1.set(head_x + 0.3, 0.65, head_z + 0.5));
 			GAME.managers.sphereBlack.addInstanceTo(GAME.graphics.scene, tmpV3$1.set(head_x - 0.3, 0.65, head_z + 0.5));
 		}
