@@ -28,6 +28,10 @@ export default class SnakeGame {
 
         this.fruit = undefined;
         this.fruit_pos = { x: 0, y: 0 }
+
+        //this.fruit_poss_i = 0
+		//this.fruit_poss = [ { x: 3, y: 3}, { x: 3, y: 7 }, { x: 7, y: 7}, { x: 7, y: 3 } ]
+
         this.generate_fruit()
         
         this.score = 0
@@ -56,6 +60,8 @@ export default class SnakeGame {
 
         this.fruit_pos.x = fruit_row;
         this.fruit_pos.y = fruit_col;
+
+        //this.fruit_pos = this.fruit_poss[this.fruit_poss_i++]
     }
 
     move_snake (keys) {

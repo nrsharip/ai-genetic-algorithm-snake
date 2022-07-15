@@ -60,6 +60,11 @@ export default class SnakeGameGATest extends SnakeGame {
 
 		// Get the maximum of all the ouputs, and this is the direction to turn
 		const max_output = Math.max(...outputs)
+
+        //console.log(this.fruit_pos.x, this.fruit_pos.y, head.x, head.y)
+        //console.log(dist_left_fruit, dist_up_fruit, dist_right_fruit, dist_down_fruit, open_spaces_left, open_spaces_up, open_spaces_down, open_spaces_right, length);
+        //console.log(outputs[0], outputs[1], outputs[2], outputs[3], max_output);
+
 		// Systematically decide which direction to turn based on the max output
         let direct;
 		if (max_output == outputs[0]) {
@@ -156,11 +161,10 @@ export default class SnakeGameGATest extends SnakeGame {
     }
 
 	check_fruit_collision () {
-        super.check_fruit_collision();
-
         if (this.snake.body[0].x == this.fruit_pos.x && this.snake.body[0].y == this.fruit_pos.y) {
             this.frames_since_last_fruit = 0
         }
+        super.check_fruit_collision();
     }
 
 	update_frames_since_last_fruit () {
