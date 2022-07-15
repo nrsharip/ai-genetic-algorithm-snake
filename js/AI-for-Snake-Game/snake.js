@@ -40,13 +40,13 @@ export default class Snake {
 
         // https://stackoverflow.com/questions/8073673/how-can-i-add-new-array-elements-at-the-beginning-of-an-array-in-javascript
         if (tail_dir == "left") {
-            this.body.push({ x: snake_tail[0],     y: snake_tail[1] + 1 }) // If tail is going left, add new tail to right of old tail
+            this.body.push({ x: snake_tail.x,     y: snake_tail.y + 1 }) // If tail is going left, add new tail to right of old tail
         } else if (tail_dir == "up") {
-            this.body.push({ x: snake_tail[0] + 1, y: snake_tail[1] })     // If tail is going up, add new tail below old tail
+            this.body.push({ x: snake_tail.x + 1, y: snake_tail.y })     // If tail is going up, add new tail below old tail
         } else if (tail_dir == "right") {
-            this.body.push({ x: snake_tail[0],     y: snake_tail[1] - 1 }) // If tail is going right, add new tail to the left of old tail
+            this.body.push({ x: snake_tail.x,     y: snake_tail.y - 1 }) // If tail is going right, add new tail to the left of old tail
         } else {
-            this.body.push({ x: snake_tail[0] - 1, y: snake_tail[1] })     // If tail is going down, add new tail above old tail
+            this.body.push({ x: snake_tail.x - 1, y: snake_tail.y })     // If tail is going down, add new tail above old tail
         }
     }
 }

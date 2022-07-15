@@ -30,6 +30,7 @@ export default class SnakeGame {
         this.cols = this.rows
         this.snake = new Snake(this.rows, this.cols);
 
+        this.fruit = undefined;
         this.fruit_pos = { x: 0, y: 0 }
         this.generate_fruit()
         
@@ -97,7 +98,7 @@ export default class SnakeGame {
         let fruit_z = this.fruit_pos.x + 0.5 - 5;
         let fruit_x = this.fruit_pos.y + 0.5 - 5;
 
-        GAME.managers.cubeRed.addInstanceTo(GAME.graphics.scene, tmpV3$1.set(fruit_x, 0, fruit_z));
+        this.fruit = GAME.managers.cubeRed.addInstanceTo(GAME.graphics.scene, tmpV3$1.set(fruit_x, 0, fruit_z));
         //console.log(this.fruit_pos.x, this.fruit_pos.y, tmpV3$1.x, tmpV3$1.y, tmpV3$1.z);
 
         let pos_x;
@@ -140,9 +141,12 @@ export default class SnakeGame {
 
     check_fruit_collision () {
         //If we found a fruit
-        if (this.snake.body[0] == this.fruit_pos) {
+        if (this.snake.body[0].x == this.fruit_pos.x && this.snake.body[0].y == this.fruit_pos.y) {
+            this.fruit.userData.releaseInstance();
+
             //Add the new body square to the tail of the snake
             this.snake.extend_snake()
+            
             //Generate a new fruit in a random position
             this.generate_fruit()
 
@@ -152,30 +156,32 @@ export default class SnakeGame {
 
     check_wall_collision () {
         //Only need to check the colisions of the head of the snake
-        head = this.snake.body[0]
-        head_y = head[0]
-        head_x = head[1]
+        let head = this.snake.body[0]
+        let head_z = head.x
+        let head_x = head.y
 
         //If there is a wall collision, game over
-        if (head_x == this.cols || head_y == this.rows || head_x < 0 || head_y < 0) {
+        if (head_x == this.cols || head_z == this.rows || head_x < 0 || head_z < 0) {
             this.game_over()
         }
     }
 
     check_body_collision () {
-        if (len(this.snake.body) > 1) {
+        if (this.snake.body.length > 1) {
             //Only need to check the colisions of the head of the snake
-            head = this.snake.body[0];
-            body_without_head = this.snake.body.slice(1);
+            let head = this.snake.body[0];
+            let body_without_head = this.snake.body.slice(1);
 
-            if (head in body_without_head) {
-                this.game_over()
+            for (let segment of body_without_head) {
+                if (head.x == segment.x && head.y == segment.y) {
+                    this.game_over()
+                }
             }
         }
     }
 
     game_over () {
-        this.snake = Snake(this.rows, this.cols)
+        this.snake = new Snake(this.rows, this.cols)
         this.generate_fruit()
         this.restart = true
         if (this.score > this.high_score) {

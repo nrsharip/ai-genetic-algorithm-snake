@@ -2,7 +2,7 @@ import * as GAME from './game.js';
 
 import SnakeGame from './AI-for-Snake-Game/snakeGame.js';
 
-const snakeGame = new SnakeGame(1000);
+const snakeGame = new SnakeGame(500);
 
 GAME.state.onPhaseChange.push( function(phase) {
     switch (phase) {
@@ -34,6 +34,7 @@ GAME.callbacks.onUpdate = function(delta, elapsed) {
         snakeGame.elapsed = elapsed
 
         snakeGame.move_snake(keys);
+        snakeGame.check_collisions();
         snakeGame.draw_grid_updates();
 
         keys.length = 0;

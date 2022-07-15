@@ -127,9 +127,9 @@ function loadStarted() {
 
 function loadCompleted() {
     let obj3d;
-    GAME.models.add("cube_green", obj3d = PRIMITIVES.makeBox(1, 1, 1, 0x44aa88));
+    GAME.models.add("cube_green", obj3d = PRIMITIVES.makeBox(0.90, 0.90, 0.90, 0x44aa88));
     obj3d["userData"].filename = "cube_green";
-    GAME.models.add("cube_red", obj3d = PRIMITIVES.makeBox(1, 1, 1, 0xFF2222));
+    GAME.models.add("cube_red", obj3d = PRIMITIVES.makeBox(0.90, 0.90, 0.90, 0xFF2222));
     obj3d["userData"].filename = "cube_red";
     GAME.models.add("sphere_black", obj3d = PRIMITIVES.makeSphere(0.1, 12, 7, 0x000000));
     obj3d["userData"].filename = "sphere_black";
