@@ -144,7 +144,7 @@ export default class SnakeGame {
     check_fruit_collision () {
         //If we found a fruit
         if (this.snake.body[0].x == this.fruit_pos.x && this.snake.body[0].y == this.fruit_pos.y) {
-            this.fruit.userData.releaseInstance();
+            this.fruit?.userData.releaseInstance();
 
             //Add the new body square to the tail of the snake
             this.snake.extend_snake()
