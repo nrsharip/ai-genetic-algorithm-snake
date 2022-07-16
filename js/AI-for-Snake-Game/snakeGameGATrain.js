@@ -55,7 +55,7 @@ export default class SnakeGameGATrain extends SnakeGameGATest {
 
             this.game_scores.length = 0
 
-            this.onGenerationOver?.();
+            this.onGenerationOver?.(this.num_generations - 1, average_game_score);
         }
 
         this.weights = NN.mapChrom2Weights(this.population[this.cur_chrom], this.bits_per_weight, this.num_inputs, this.num_hidden_layer_nodes, this.num_outputs)

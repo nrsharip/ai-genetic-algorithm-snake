@@ -57,17 +57,21 @@ snakeGameGATrain.onGameOver = function(num_generations, cur_chrom, score, frames
     CHARTS.chart1.update();
 }
 
-snakeGameGATrain.onGenerationOver = function() {
+snakeGameGATrain.onGenerationOver = function(num_generations, average_game_score) {
     CHARTS.data1.length = 0
     CHARTS.cfg1.data.labels.length = 0
+
+    CHARTS.data2.push({ x: num_generations, average_game_score: average_game_score });
+    CHARTS.cfg2.data.labels.push(num_generations);
+    CHARTS.chart2.update();
 }
 
-function train() {
+function train(redraw) {
     snakeGameGATrain.move_snake(keys);
     snakeGameGATrain.check_collisions();
     snakeGameGATrain.update_frames_since_last_fruit();
     snakeGameGATrain.frames_alive++;
-    // snakeGameGATrain.draw_grid_updates();
+    if (redraw) { snakeGameGATrain.draw_grid_updates(); }
 }
 
 GAME.callbacks.onUpdate = function(delta, elapsed) {
