@@ -1,6 +1,8 @@
 import * as GAME from './game.js';
 import * as GA from './AI-for-Snake-Game/geneticAlgorithm.js';
 
+import * as CHARTS from './charts.js'
+
 import SnakeGame from './AI-for-Snake-Game/snakeGame.js';
 import SnakeGameGATest from './AI-for-Snake-Game/snakeGameGATest.js';
 import SnakeGameGATrain from './AI-for-Snake-Game/snakeGameGATrain.js';

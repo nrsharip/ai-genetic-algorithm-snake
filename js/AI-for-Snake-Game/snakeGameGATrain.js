@@ -26,7 +26,7 @@ export default class SnakeGameGATrain extends SnakeGameGATest {
         this.fitness_scores.push(this.fitness);
         this.game_scores.push(this.score);
 
-        console.log("gen:", this.num_generations, "chrom:", this.cur_chrom, "score:", this.score, "alive:", this.frames_alive, "fitness:", this.fitness);
+        //console.log("gen:", this.num_generations, "chrom:", this.cur_chrom, "score:", this.score, "alive:", this.frames_alive, "fitness:", this.fitness);
 
         this.cur_chrom +=1
 
@@ -45,7 +45,7 @@ export default class SnakeGameGATrain extends SnakeGameGATest {
 
             const high_score_per_cur_gen = Math.max(...this.game_scores)
 
-            console.log(this.num_generations, this.high_score, average_game_score, high_score_per_cur_gen, average_fitness)
+            //console.log(this.num_generations, this.high_score, average_game_score, high_score_per_cur_gen, average_fitness)
 
             this.game_scores.length = 0
         }
