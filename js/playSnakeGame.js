@@ -23,6 +23,7 @@ const snakeGameGATest = new SnakeGameGATest(25, chromosome, bits_per_weight, num
 const snakeGameGATrain = new SnakeGameGATrain(0, population, chroms_per_gen, bits_per_weight, num_inputs, num_hiddens, num_outputs);
 
 window.snake = snakeGameGATrain;
+window.CHARTS = CHARTS;
 
 GAME.state.onPhaseChange.push( function(phase) {
     switch (phase) {
@@ -35,7 +36,7 @@ GAME.state.onPhaseChange.push( function(phase) {
         case GAME.PHASES.LOAD_COMPLETED:
             console.log("load completed");
 
-            setInterval(train, 0);
+            //setInterval(train, 0);
 
             GAME.state.phase = GAME.PHASES.GAME_STARTED;
             break;
@@ -52,12 +53,12 @@ const keys = []
 
 GAME.callbacks.onUpdate = function(delta, elapsed) {
     
-    if (snakeGame.elapsed == 0 || (elapsed - snakeGame.elapsed > snakeGame.delay)) {
-        snakeGame.elapsed = elapsed
+    // if (snakeGame.elapsed == 0 || (elapsed - snakeGame.elapsed > snakeGame.delay)) {
+    //     snakeGame.elapsed = elapsed
     // if (snakeGameGATest.elapsed == 0 || (elapsed - snakeGameGATest.elapsed > snakeGameGATest.delay)) {
     //     snakeGameGATest.elapsed = elapsed
-    // if (snakeGameGATrain.elapsed == 0 || (elapsed - snakeGameGATrain.elapsed > snakeGameGATrain.delay)) {
-    //     snakeGameGATrain.elapsed = elapsed
+    if (snakeGameGATrain.elapsed == 0 || (elapsed - snakeGameGATrain.elapsed > snakeGameGATrain.delay)) {
+        snakeGameGATrain.elapsed = elapsed
 
         snakeGame.move_snake(keys);
         snakeGame.check_collisions();
@@ -68,11 +69,11 @@ GAME.callbacks.onUpdate = function(delta, elapsed) {
         // snakeGameGATest.update_frames_since_last_fruit();
         // snakeGameGATest.draw_grid_updates();
 
-        // snakeGameGATrain.move_snake(keys);
-        // snakeGameGATrain.check_collisions();
-        // snakeGameGATrain.update_frames_since_last_fruit();
-        // snakeGameGATrain.frames_alive++;
-        // snakeGameGATrain.draw_grid_updates();
+        snakeGameGATrain.move_snake(keys);
+        snakeGameGATrain.check_collisions();
+        snakeGameGATrain.update_frames_since_last_fruit();
+        snakeGameGATrain.frames_alive++;
+        snakeGameGATrain.draw_grid_updates();
 
         keys.length = 0;
     }

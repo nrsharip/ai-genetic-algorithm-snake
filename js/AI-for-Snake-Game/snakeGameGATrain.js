@@ -1,6 +1,8 @@
 import * as GA from './geneticAlgorithm.js';
 import * as NN from './neuralNetwork.js';
 
+import * as CHARTS from '../charts.js'
+
 import Snake from './snake.js';
 import SnakeGameGATest from './snakeGameGATest.js';
 
@@ -26,6 +28,10 @@ export default class SnakeGameGATrain extends SnakeGameGATest {
         this.fitness_scores.push(this.fitness);
         this.game_scores.push(this.score);
 
+        CHARTS.data.push({ x: this.cur_chrom, score: this.score, alive: this.frames_alive });
+        CHARTS.cfg.data.labels.push(this.cur_chrom);
+        CHARTS.chart1.update();
+
         //console.log("gen:", this.num_generations, "chrom:", this.cur_chrom, "score:", this.score, "alive:", this.frames_alive, "fitness:", this.fitness);
 
         this.cur_chrom +=1
@@ -48,6 +54,9 @@ export default class SnakeGameGATrain extends SnakeGameGATest {
             //console.log(this.num_generations, this.high_score, average_game_score, high_score_per_cur_gen, average_fitness)
 
             this.game_scores.length = 0
+
+            CHARTS.data.length = 0
+            CHARTS.cfg.data.labels.length = 0
         }
 
         this.weights = NN.mapChrom2Weights(this.population[this.cur_chrom], this.bits_per_weight, this.num_inputs, this.num_hidden_layer_nodes, this.num_outputs)
