@@ -87,7 +87,7 @@
 			.gameui {
 				width: 49%;
 				/* https://stackoverflow.com/questions/47344626/put-a-table-in-a-canvas-in-html */
-				position: absolute;
+				position: fixed;
 				z-index: 2;
 			}
 
@@ -124,9 +124,10 @@
 				<div class="col">
 					<div class="container gameui">
 						<div class="row">
-							<div class="col text-center">test1</div>
-							<div class="col text-center">test2</div>
-							<div class="col text-center">test3</div>
+							<div id="generation" class="col text-center"></div>
+							<div id="chromosome" class="col text-center"></div>
+							<div id="score" class="col text-center"></div>
+							<div id="high_score" class="col text-center"></div>
 						</div>
 					</div>
 					<canvas id="mainCanvas"></canvas>

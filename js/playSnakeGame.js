@@ -64,6 +64,11 @@ snakeGameGATrain.onGameOver = function(num_generations, cur_chrom, score, frames
     CHARTS.chart1.update();
     CHARTS.chart3.update();
     CHARTS.chart4.update();
+
+    document.getElementById("generation").textContent = `GENERATION: ${snakeGameGATrain.num_generations}`;
+    document.getElementById("chromosome").textContent = `CHROMOSOME: ${snakeGameGATrain.cur_chrom}`;
+    document.getElementById("score").textContent = `SCORE: ${snakeGameGATrain.score}`;
+    document.getElementById("high_score").textContent = `HIGHSCORE: ${snakeGameGATrain.high_score}`;
 }
 
 snakeGameGATrain.onGenerationOver = function(num_generations, average_game_score, average_frame_score, average_fitness, best_individual) {
