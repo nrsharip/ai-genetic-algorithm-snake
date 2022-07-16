@@ -20,6 +20,8 @@ export default class SnakeGameGATrain extends SnakeGameGATest {
         this.fitness_scores = []
         this.game_scores = []
         
+        this.onGameOver = undefined;
+        this.onGenerationOver = undefined;
     }
 
     game_over() {
@@ -28,9 +30,7 @@ export default class SnakeGameGATrain extends SnakeGameGATest {
         this.fitness_scores.push(this.fitness);
         this.game_scores.push(this.score);
 
-        CHARTS.data.push({ x: this.cur_chrom, score: this.score, alive: this.frames_alive });
-        CHARTS.cfg.data.labels.push(this.cur_chrom);
-        CHARTS.chart1.update();
+        this.onGameOver?.(this.num_generations, this.cur_chrom, this.score, this.frames_alive, this.fitness)
 
         //console.log("gen:", this.num_generations, "chrom:", this.cur_chrom, "score:", this.score, "alive:", this.frames_alive, "fitness:", this.fitness);
 
@@ -55,8 +55,7 @@ export default class SnakeGameGATrain extends SnakeGameGATest {
 
             this.game_scores.length = 0
 
-            CHARTS.data.length = 0
-            CHARTS.cfg.data.labels.length = 0
+            this.onGenerationOver?.();
         }
 
         this.weights = NN.mapChrom2Weights(this.population[this.cur_chrom], this.bits_per_weight, this.num_inputs, this.num_hidden_layer_nodes, this.num_outputs)

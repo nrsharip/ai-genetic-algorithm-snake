@@ -51,6 +51,25 @@ GAME.state.onPhaseChange.push( function(phase) {
 
 const keys = []
 
+snakeGameGATrain.onGameOver = function(num_generations, cur_chrom, score, frames_alive, fitness) {
+    CHARTS.data1.push({ x: cur_chrom, score: score, alive: frames_alive });
+    CHARTS.cfg1.data.labels.push(cur_chrom);
+    CHARTS.chart1.update();
+}
+
+snakeGameGATrain.onGenerationOver = function() {
+    CHARTS.data1.length = 0
+    CHARTS.cfg1.data.labels.length = 0
+}
+
+function train() {
+    snakeGameGATrain.move_snake(keys);
+    snakeGameGATrain.check_collisions();
+    snakeGameGATrain.update_frames_since_last_fruit();
+    snakeGameGATrain.frames_alive++;
+    // snakeGameGATrain.draw_grid_updates();
+}
+
 GAME.callbacks.onUpdate = function(delta, elapsed) {
     
     // if (snakeGame.elapsed == 0 || (elapsed - snakeGame.elapsed > snakeGame.delay)) {
@@ -60,9 +79,9 @@ GAME.callbacks.onUpdate = function(delta, elapsed) {
     if (snakeGameGATrain.elapsed == 0 || (elapsed - snakeGameGATrain.elapsed > snakeGameGATrain.delay)) {
         snakeGameGATrain.elapsed = elapsed
 
-        snakeGame.move_snake(keys);
-        snakeGame.check_collisions();
-        snakeGame.draw_grid_updates();
+        // snakeGame.move_snake(keys);
+        // snakeGame.check_collisions();
+        // snakeGame.draw_grid_updates();
 
         // snakeGameGATest.move_snake(keys);
         // snakeGameGATest.check_collisions();
@@ -77,14 +96,6 @@ GAME.callbacks.onUpdate = function(delta, elapsed) {
 
         keys.length = 0;
     }
-}
-
-function train() {
-    snakeGameGATrain.move_snake(keys);
-    snakeGameGATrain.check_collisions();
-    snakeGameGATrain.update_frames_since_last_fruit();
-    snakeGameGATrain.frames_alive++;
-    // snakeGameGATrain.draw_grid_updates();
 }
 
 GAME.callbacks.onKeyDown = function(event) {

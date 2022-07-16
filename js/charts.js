@@ -1,17 +1,17 @@
-const data = [];
-const cfg = {
+const data1 = [];
+const cfg1 = {
     type: 'bar',
     data: {
         labels: [],
         datasets: [{
             label: 'Score',
-            data: data,
+            data: data1,
             backgroundColor: '#FFA600',
             parsing: { yAxisKey: 'score' },
             yAxisID: 'y',
         }, {
             label: 'Frames Alive',
-            data: data,
+            data: data1,
             backgroundColor: '#BC5090',
             parsing: { yAxisKey: 'alive' },
             yAxisID: 'y1',
@@ -41,8 +41,9 @@ const cfg = {
       }
 };
 
-const chart1 = new Chart($("#chart1")[0].getContext('2d'), cfg);
+const chart1 = new Chart($("#chart1")[0].getContext('2d'), cfg1);
 
-console.log(chart1);
+export { 
+    data1, cfg1, chart1 
 
-export { data, cfg, chart1 }
+}
