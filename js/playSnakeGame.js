@@ -33,6 +33,8 @@ GAME.state.onPhaseChange.push( function(phase) {
         case GAME.PHASES.LOAD_COMPLETED:
             console.log("load completed");
 
+            setInterval(train, 0);
+
             GAME.state.phase = GAME.PHASES.GAME_STARTED;
             break;
         case GAME.PHASES.GAME_STARTED:
@@ -48,31 +50,38 @@ const keys = []
 
 GAME.callbacks.onUpdate = function(delta, elapsed) {
     
-    // if (snakeGame.elapsed == 0 || (elapsed - snakeGame.elapsed > snakeGame.delay)) {
-    //     snakeGame.elapsed = elapsed
+    if (snakeGame.elapsed == 0 || (elapsed - snakeGame.elapsed > snakeGame.delay)) {
+        snakeGame.elapsed = elapsed
     // if (snakeGameGATest.elapsed == 0 || (elapsed - snakeGameGATest.elapsed > snakeGameGATest.delay)) {
     //     snakeGameGATest.elapsed = elapsed
-    if (snakeGameGATrain.elapsed == 0 || (elapsed - snakeGameGATrain.elapsed > snakeGameGATrain.delay)) {
-        snakeGameGATrain.elapsed = elapsed
+    // if (snakeGameGATrain.elapsed == 0 || (elapsed - snakeGameGATrain.elapsed > snakeGameGATrain.delay)) {
+    //     snakeGameGATrain.elapsed = elapsed
 
-        // snakeGame.move_snake(keys);
-        // snakeGame.check_collisions();
-        // snakeGame.draw_grid_updates();
+        snakeGame.move_snake(keys);
+        snakeGame.check_collisions();
+        snakeGame.draw_grid_updates();
 
         // snakeGameGATest.move_snake(keys);
         // snakeGameGATest.check_collisions();
         // snakeGameGATest.update_frames_since_last_fruit();
         // snakeGameGATest.draw_grid_updates();
 
-        snakeGameGATrain.move_snake(keys);
-        snakeGameGATrain.check_collisions();
-        snakeGameGATrain.update_frames_since_last_fruit();
-        snakeGameGATrain.frames_alive++;
-        snakeGameGATrain.draw_grid_updates();
+        // snakeGameGATrain.move_snake(keys);
+        // snakeGameGATrain.check_collisions();
+        // snakeGameGATrain.update_frames_since_last_fruit();
+        // snakeGameGATrain.frames_alive++;
+        // snakeGameGATrain.draw_grid_updates();
 
         keys.length = 0;
     }
+}
 
+function train() {
+    snakeGameGATrain.move_snake(keys);
+    snakeGameGATrain.check_collisions();
+    snakeGameGATrain.update_frames_since_last_fruit();
+    snakeGameGATrain.frames_alive++;
+    // snakeGameGATrain.draw_grid_updates();
 }
 
 GAME.callbacks.onKeyDown = function(event) {
