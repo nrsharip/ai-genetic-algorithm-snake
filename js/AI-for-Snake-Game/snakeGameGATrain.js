@@ -52,17 +52,8 @@ export default class SnakeGameGATrain extends SnakeGameGATest {
 
         this.weights = NN.mapChrom2Weights(this.population[this.cur_chrom], this.bits_per_weight, this.num_inputs, this.num_hidden_layer_nodes, this.num_outputs)
 
-        // Reset the game itself
-        this.snake = new Snake(this.rows,this.cols);
-        this.generate_fruit();
-        this.restart = true;
-        if (this.score > this.high_score) {
-            this.high_score = this.score;
-        }
-        this.score = 0;
+        super.game_over();
         this.frames_alive = 0;
-        this.frames_since_last_fruit = 0;
-
         this.fitness = 0;
     }
     
