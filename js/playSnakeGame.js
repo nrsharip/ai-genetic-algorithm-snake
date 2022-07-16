@@ -52,18 +52,33 @@ GAME.state.onPhaseChange.push( function(phase) {
 const keys = []
 
 snakeGameGATrain.onGameOver = function(num_generations, cur_chrom, score, frames_alive, fitness) {
-    CHARTS.data1.push({ x: cur_chrom, score: score, alive: frames_alive });
+    CHARTS.data1.push({ x: cur_chrom, score: score, frame_score: fitness.frame_score });
     CHARTS.cfg1.data.labels.push(cur_chrom);
+    
+    CHARTS.data3.push({ x: cur_chrom, _1: fitness._1, _2: fitness._2 });
+    CHARTS.cfg3.data.labels.push(cur_chrom);
+
+    CHARTS.data4.push({ x: cur_chrom, _3: fitness._3 });
+    CHARTS.cfg4.data.labels.push(cur_chrom);
+
     CHARTS.chart1.update();
+    CHARTS.chart3.update();
+    CHARTS.chart4.update();
 }
 
-snakeGameGATrain.onGenerationOver = function(num_generations, average_game_score) {
+snakeGameGATrain.onGenerationOver = function(num_generations, average_game_score, average_frame_score, average_fitness, best_individual) {
     CHARTS.data1.length = 0
     CHARTS.cfg1.data.labels.length = 0
+    CHARTS.data3.length = 0
+    CHARTS.cfg3.data.labels.length = 0
+    CHARTS.data4.length = 0
+    CHARTS.cfg4.data.labels.length = 0
 
-    CHARTS.data2.push({ x: num_generations, average_game_score: average_game_score });
+    CHARTS.data2.push({ x: num_generations, average_game_score: average_game_score, average_frame_score: average_frame_score });
     CHARTS.cfg2.data.labels.push(num_generations);
     CHARTS.chart2.update();
+
+    document.getElementById("bestIndividual").textContent = best_individual;
 }
 
 function train(redraw) {

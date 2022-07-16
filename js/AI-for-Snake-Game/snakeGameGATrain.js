@@ -18,6 +18,7 @@ export default class SnakeGameGATrain extends SnakeGameGATest {
         this.population = population
         this.weights = NN.mapChrom2Weights(this.population[this.cur_chrom], this.bits_per_weight, this.num_inputs, this.num_hidden_layer_nodes, this.num_outputs)
         this.fitness_scores = []
+        this.frame_scores = []
         this.game_scores = []
         
         this.onGameOver = undefined;
@@ -27,7 +28,8 @@ export default class SnakeGameGATrain extends SnakeGameGATest {
     game_over() {
         // Make necessary updates to move onto the next chromosome.
         this.fitness = this.calc_fitness();
-        this.fitness_scores.push(this.fitness);
+        this.fitness_scores.push(this.fitness._3);
+        this.frame_scores.push(this.fitness.frame_score);
         this.game_scores.push(this.score);
 
         this.onGameOver?.(this.num_generations, this.cur_chrom, this.score, this.frames_alive, this.fitness)
@@ -48,6 +50,7 @@ export default class SnakeGameGATrain extends SnakeGameGATest {
             this.fitness_scores = []
 
             const average_game_score = this.game_scores.reduce((sum, a) => sum + a, 0) / this.game_scores.length;
+            const average_frame_score = this.frame_scores.reduce((sum, a) => sum + a, 0) / this.frame_scores.length;
 
             const high_score_per_cur_gen = Math.max(...this.game_scores)
 
@@ -55,7 +58,7 @@ export default class SnakeGameGATrain extends SnakeGameGATest {
 
             this.game_scores.length = 0
 
-            this.onGenerationOver?.(this.num_generations - 1, average_game_score);
+            this.onGenerationOver?.(this.num_generations - 1, average_game_score, average_frame_score, average_fitness, best_individual);
         }
 
         this.weights = NN.mapChrom2Weights(this.population[this.cur_chrom], this.bits_per_weight, this.num_inputs, this.num_hidden_layer_nodes, this.num_outputs)
@@ -83,6 +86,6 @@ export default class SnakeGameGATrain extends SnakeGameGATest {
         let _2 = frame_score**1.5  //  nrsharip
         let _3 = _1 * _2           //  nrsharip ((this.score*2)**2)*(frame_score**1.5)
 
-        return _3
+        return { frame_score, _1, _2, _3 }
     }
 }
