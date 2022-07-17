@@ -56,8 +56,8 @@ export default class AsbtractGameObjectManager {
     addInstanceTo(to, position, rotation, linVelocity, angVelocity) {
         let obj3d = this.acquireInstance();
 
-        PHYSICS.clearForces(obj3d);
-        PHYSICS.addRigidBody(obj3d);
+        //PHYSICS.clearForces(obj3d);
+        //PHYSICS.addRigidBody(obj3d);
         
         if (position) { UTILS.tmpV1.set(position.x, position.y, position.z); } else { UTILS.tmpV1.set(0, 0, 0); }
         if (rotation) { UTILS.tmpQuat1.set(rotation.x, rotation.y, rotation.z, rotation.w); } else { UTILS.tmpQuat1.identity(); }
@@ -70,8 +70,8 @@ export default class AsbtractGameObjectManager {
         obj3d.position.z = UTILS.tmpV1.z;
     
         // In case dynamics world is ON
-        PHYSICS.makeTranslationAndRotation(obj3d, UTILS.tmpV1, UTILS.tmpQuat1);
-        PHYSICS.setLinearAndAngularVelocity(obj3d, UTILS.tmpV2, UTILS.tmpV3);
+        //PHYSICS.makeTranslationAndRotation(obj3d, UTILS.tmpV1, UTILS.tmpQuat1);
+        //PHYSICS.setLinearAndAngularVelocity(obj3d, UTILS.tmpV2, UTILS.tmpV3);
     
         to.add( obj3d );
         return obj3d;
@@ -84,8 +84,26 @@ export default class AsbtractGameObjectManager {
     releaseInstance() {
         this.position.set(0,0,123);
         // physics
-        PHYSICS.makeTranslation(this, UTILS.tmpV3.set(0,0,123));
-        PHYSICS.removeRigidBody(this);
+
+        // Exception Stack Trace:
+        // qa (ammo.wasm.js:17)
+        // d (ammo.wasm.js:23)
+        // $func103 (ammo.wasm.wasm:0xa2bf)
+        // $aB (ammo.wasm.wasm:0x1a9f1)
+        // $func1304 (ammo.wasm.wasm:0x6d188)
+        // $func1305 (ammo.wasm.wasm:0x6d19f)
+        // $func10 (ammo.wasm.wasm:0x3575)
+        // $Za (ammo.wasm.wasm:0x5d427)
+        // m (ammo.wasm.js:539)
+        // makeTranslation (physics.js:113)
+        // releaseInstance (object.js:87)
+        // releaseAllInstances (object.js:98)
+        // releaseAllInstances (game.js:135)
+        // draw_grid_updates (snakeGame.js:97)
+        // GAME.callbacks.onUpdate (playSnakeGame.js:155)
+        // render (main.js:218)
+        //PHYSICS.makeTranslation(this, UTILS.tmpV3.set(0,0,123));
+        //PHYSICS.removeRigidBody(this);
         // pool
         GAME.instances.releaseInstance(this); 
     }

@@ -103,9 +103,13 @@ snakeGameGATrain.onGenerationOver = function(num_generations, average_game_score
     CHARTS.data2.push({ x: num_generations, average_game_score: average_game_score, average_frame_score: average_frame_score });
     CHARTS.cfg2.data.labels.push(num_generations);
     
+    CHARTS.data7.push({ x: num_generations, average_fitness: average_fitness });
+    CHARTS.cfg7.data.labels.push(num_generations);
+
     CHARTS.chart5.update();
     CHARTS.chart6.update();
     CHARTS.chart2.update();
+    CHARTS.chart7.update();
 
     document.getElementById("bestIndividual").textContent = best_individual;
 

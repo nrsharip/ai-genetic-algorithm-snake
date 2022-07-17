@@ -107,6 +107,25 @@ const cfg6 = {
       }
 };
 
+const data7 = [];
+const cfg7 = {
+    type: 'bar',
+    data: {
+        labels: [],
+        datasets: [
+            { label: 'Average Fitness', data: data7, backgroundColor: '#2586a4', parsing: { yAxisKey: 'average_fitness' }, yAxisID: 'y', }, 
+        ]
+    },
+    // https://www.chartjs.org/docs/3.8.0/samples/line/multi-axis.html
+    options: {
+        responsive: true,
+        stacked: false,
+        scales: {
+          y: { type: 'linear', display: true, position: 'left', },
+        }
+      }
+};
+
 const data2 = [];
 const cfg2 = {
     type: 'bar',
@@ -139,6 +158,7 @@ const chart3 = new Chart($("#chart3")[0].getContext('2d'), cfg3);
 const chart4 = new Chart($("#chart4")[0].getContext('2d'), cfg4);
 const chart5 = new Chart($("#chart5")[0].getContext('2d'), cfg5);
 const chart6 = new Chart($("#chart6")[0].getContext('2d'), cfg6);
+const chart7 = new Chart($("#chart7")[0].getContext('2d'), cfg7);
 
 export { 
     data1, cfg1, chart1,
@@ -147,4 +167,5 @@ export {
     data4, cfg4, chart4,
     data5, cfg5, chart5,
     data6, cfg6, chart6,
+    data7, cfg7, chart7,
 }

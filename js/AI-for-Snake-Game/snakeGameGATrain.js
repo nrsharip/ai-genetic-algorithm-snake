@@ -70,7 +70,13 @@ export default class SnakeGameGATrain extends SnakeGameGATest {
             );
         }
 
-        this.weights = NN.mapChrom2Weights(this.population[this.cur_chrom], this.bits_per_weight, this.num_inputs, this.num_hidden_layer_nodes, this.num_outputs)
+        this.weights = NN.mapChrom2Weights(
+            this.population[this.cur_chrom], 
+            this.bits_per_weight, 
+            this.num_inputs, 
+            this.num_hidden_layer_nodes, 
+            this.num_outputs
+        );
 
         super.game_over();
         this.frames_alive = 0;
