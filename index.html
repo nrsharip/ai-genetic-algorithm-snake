@@ -114,14 +114,28 @@
 		<div class="container m-0"> <!-- for m-0 see: https://getbootstrap.com/docs/4.0/utilities/spacing/--> 
 			<div class="row">
 				<div class="col-7 text-center">
-					<canvas id="chart1" style="position: relative; width:40vw; height:20vh"></canvas>
-					<canvas id="chart3" style="position: relative; width:40vw; height:20vh"></canvas>
-					<canvas id="chart4" style="position: relative; width:40vw; height:20vh"></canvas>
-					<canvas id="chart5" style="position: relative; width:40vw; height:20vh"></canvas>
-					<canvas id="chart6" style="position: relative; width:40vw; height:20vh"></canvas>
-					<canvas id="chart2" style="position: relative; width:40vw; height:20vh"></canvas>
-					<p>Best Individual:</p>
-					<textarea name="bestIndividual" id="bestIndividual" cols="80" rows="8" style="font-size: 8pt; font-family: 'Courier New', Courier, monospace;"></textarea>
+					<div class="container m-0 p-0">
+						<div class="row m-0 p-0">
+							<div id="downloadPopulation" class="col text-left m-0 p-0">
+							</div>
+						</div>
+						<div class="row m-0 p-0">
+							<div class="col m-0 p-0">
+								<canvas id="chart1" style="position: relative; width:40vw; height:20vh"></canvas>
+								<canvas id="chart3" style="position: relative; width:40vw; height:20vh"></canvas>
+								<canvas id="chart4" style="position: relative; width:40vw; height:20vh"></canvas>
+								<canvas id="chart5" style="position: relative; width:40vw; height:20vh"></canvas>
+								<canvas id="chart6" style="position: relative; width:40vw; height:20vh"></canvas>
+								<canvas id="chart2" style="position: relative; width:40vw; height:20vh"></canvas>
+							</div>
+						</div>
+						<div class="row m-0 p-0">
+							<div class="col m-0 p-0">
+								<p>Best Individual:</p>
+								<textarea name="bestIndividual" id="bestIndividual" cols="80" rows="8" style="font-size: 8pt; font-family: 'Courier New', Courier, monospace;"></textarea>
+							</div>
+						</div>
+					</div>
 				</div>
 				<div class="col">
 					<div class="container gameui">
