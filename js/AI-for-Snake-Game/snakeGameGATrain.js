@@ -42,12 +42,12 @@ export default class SnakeGameGATrain extends SnakeGameGATest {
         if (this.cur_chrom == this.chroms_per_gen) {
             // Move onto next generation
             this.num_generations +=1
-            const { next_generation, best_individual, best_fitness, average_fitness} = 
+            const { next_generation, best_individual, best_fitness, average_fitness, fitnessRatios, fitnessRouletteCutoffs} = 
                 GA.createNextGeneration(this.population, this.fitness_scores, this.num_generations)
             
-            this.population = next_generation
-            this.cur_chrom  = 0
-            this.fitness_scores = []
+            this.population = next_generation;
+            this.cur_chrom  = 0;
+            this.fitness_scores.length = 0;
 
             const average_game_score = this.game_scores.reduce((sum, a) => sum + a, 0) / this.game_scores.length;
             const average_frame_score = this.frame_scores.reduce((sum, a) => sum + a, 0) / this.frame_scores.length;
@@ -56,9 +56,18 @@ export default class SnakeGameGATrain extends SnakeGameGATest {
 
             //console.log(this.num_generations, this.high_score, average_game_score, high_score_per_cur_gen, average_fitness)
 
-            this.game_scores.length = 0
+            this.frame_scores.length = 0;
+            this.game_scores.length = 0;
 
-            this.onGenerationOver?.(this.num_generations - 1, average_game_score, average_frame_score, average_fitness, best_individual);
+            this.onGenerationOver?.(
+                this.num_generations - 1, 
+                average_game_score, 
+                average_frame_score, 
+                average_fitness, 
+                best_individual,
+                fitnessRatios,
+                fitnessRouletteCutoffs,
+            );
         }
 
         this.weights = NN.mapChrom2Weights(this.population[this.cur_chrom], this.bits_per_weight, this.num_inputs, this.num_hidden_layer_nodes, this.num_outputs)

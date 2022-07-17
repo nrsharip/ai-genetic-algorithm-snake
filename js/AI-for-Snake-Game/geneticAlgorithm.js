@@ -22,15 +22,15 @@ export function genPopulation(popSize, numBits) {
     return chromosomes
 }
 
-export function createNextGeneration(parentPop, fitnessScores, num_generations, label) {
+export function createNextGeneration(parentPop, fitnessScores) {
     // Assign fitness scores
-    const { fitnessRouletteCutoffs, bestIndividual, bestFitness, averageFitness } = 
-        assignFitnessRatios(parentPop, fitnessScores, num_generations, label)
+    const { fitnessRouletteCutoffs, bestIndividual, bestFitness, averageFitness, fitnessRatios } = 
+        assignFitnessRatios(parentPop, fitnessScores)
 
     const childPop = []
 
     // Save the best individuals from the previous generation
-    const bestParents = extractBestParents(parentPop, fitnessScores, num_generations, label)
+    const bestParents = extractBestParents(parentPop, fitnessScores)
 
     // Create a child population the same size as the parent population
     for (let i = 0; i < parentPop.length - bestParents.length; i++) { // CHECK
@@ -51,11 +51,13 @@ export function createNextGeneration(parentPop, fitnessScores, num_generations, 
         next_generation: childPop, 
         best_individual: bestIndividual, 
         best_fitness: bestFitness, 
-        average_fitness: averageFitness 
+        average_fitness: averageFitness,
+        fitnessRatios: fitnessRatios,
+        fitnessRouletteCutoffs: fitnessRouletteCutoffs,
     }
 }
 
-export function assignFitnessRatios(parentPop, fitnessScores, num_generations, label) {
+export function assignFitnessRatios(parentPop, fitnessScores) {
     // Get data about the fitness scores
     const bestFitness = Math.max(...fitnessScores)
     const bestIndividual = parentPop[fitnessScores.indexOf(bestFitness)]
@@ -78,12 +80,12 @@ export function assignFitnessRatios(parentPop, fitnessScores, num_generations, l
     // https://stackoverflow.com/questions/20477177/creating-an-array-of-cumulative-sum-in-javascript
     const fitnessRouletteCutoffs = fitnessRatios.map((sum => value => sum += value)(0));
 
-    return { fitnessRouletteCutoffs, bestIndividual, bestFitness, averageFitness }
+    return { fitnessRouletteCutoffs, bestIndividual, bestFitness, averageFitness, fitnessRatios }
 }
 
-export function extractBestParents(parentPop, fitnessScores, num_generations, label) {
+export function extractBestParents(parentPop, fitnessScores) {
     const fitnessScoresCopy = [...fitnessScores];
-    fitnessScoresCopy.sort();
+    fitnessScoresCopy.sort((a, b) => a - b);
 
     const maxIndex = fitnessScores.length - 1
 

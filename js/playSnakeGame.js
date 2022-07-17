@@ -58,6 +58,7 @@ snakeGameGATrain.onGameOver = function(num_generations, cur_chrom, score, frames
     CHARTS.data3.push({ x: cur_chrom, _1: fitness._1, _2: fitness._2 });
     CHARTS.cfg3.data.labels.push(cur_chrom);
 
+    //console.log(fitness._3);
     CHARTS.data4.push({ x: cur_chrom, _3: fitness._3 });
     CHARTS.cfg4.data.labels.push(cur_chrom);
 
@@ -71,7 +72,7 @@ snakeGameGATrain.onGameOver = function(num_generations, cur_chrom, score, frames
     document.getElementById("high_score").textContent = `HIGHSCORE: ${snakeGameGATrain.high_score}`;
 }
 
-snakeGameGATrain.onGenerationOver = function(num_generations, average_game_score, average_frame_score, average_fitness, best_individual) {
+snakeGameGATrain.onGenerationOver = function(num_generations, average_game_score, average_frame_score, average_fitness, best_individual, fitnessRatios, fitnessRouletteCutoffs) {
     CHARTS.data1.length = 0
     CHARTS.cfg1.data.labels.length = 0
     CHARTS.data3.length = 0
@@ -79,8 +80,25 @@ snakeGameGATrain.onGenerationOver = function(num_generations, average_game_score
     CHARTS.data4.length = 0
     CHARTS.cfg4.data.labels.length = 0
 
+    CHARTS.data5.length = 0
+    CHARTS.cfg5.data.labels.length = 0
+    CHARTS.data6.length = 0
+    CHARTS.cfg6.data.labels.length = 0
+
+    for (let i = 0; i < fitnessRatios.length; i++) {
+        CHARTS.data5.push({ x: i, ratio: fitnessRatios[i] });
+        CHARTS.cfg5.data.labels.push(i);
+    }
+    for (let i = 0; i < fitnessRouletteCutoffs.length; i++) {
+        CHARTS.data6.push({ x: i, cutoff: fitnessRouletteCutoffs[i] });
+        CHARTS.cfg6.data.labels.push(i);
+    }
+
     CHARTS.data2.push({ x: num_generations, average_game_score: average_game_score, average_frame_score: average_frame_score });
     CHARTS.cfg2.data.labels.push(num_generations);
+    
+    CHARTS.chart5.update();
+    CHARTS.chart6.update();
     CHARTS.chart2.update();
 
     document.getElementById("bestIndividual").textContent = best_individual;

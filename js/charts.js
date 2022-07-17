@@ -56,7 +56,45 @@ const cfg4 = {
     data: {
         labels: [],
         datasets: [
-            { label: 'Fitness', data: data4, backgroundColor: '#FFA600', parsing: { yAxisKey: '_3' }, yAxisID: 'y', }, 
+            { label: 'Fitness', data: data4, backgroundColor: '#6ebe9f', parsing: { yAxisKey: '_3' }, yAxisID: 'y', }, 
+        ]
+    },
+    // https://www.chartjs.org/docs/3.8.0/samples/line/multi-axis.html
+    options: {
+        responsive: true,
+        stacked: false,
+        scales: {
+          y: { type: 'linear', display: true, position: 'left', },
+        }
+      }
+};
+
+const data5 = [];
+const cfg5 = {
+    type: 'bar',
+    data: {
+        labels: [],
+        datasets: [
+            { label: 'Fitness Ratios', data: data5, backgroundColor: '#c73558', parsing: { yAxisKey: 'ratio' }, yAxisID: 'y', }, 
+        ]
+    },
+    // https://www.chartjs.org/docs/3.8.0/samples/line/multi-axis.html
+    options: {
+        responsive: true,
+        stacked: false,
+        scales: {
+          y: { type: 'linear', display: true, position: 'left', },
+        }
+      }
+};
+
+const data6 = [];
+const cfg6 = {
+    type: 'bar',
+    data: {
+        labels: [],
+        datasets: [
+            { label: 'Fitness Cutoffs', data: data6, backgroundColor: '#2586a4', parsing: { yAxisKey: 'cutoff' }, yAxisID: 'y', }, 
         ]
     },
     // https://www.chartjs.org/docs/3.8.0/samples/line/multi-axis.html
@@ -99,10 +137,14 @@ const chart1 = new Chart($("#chart1")[0].getContext('2d'), cfg1);
 const chart2 = new Chart($("#chart2")[0].getContext('2d'), cfg2);
 const chart3 = new Chart($("#chart3")[0].getContext('2d'), cfg3);
 const chart4 = new Chart($("#chart4")[0].getContext('2d'), cfg4);
+const chart5 = new Chart($("#chart5")[0].getContext('2d'), cfg5);
+const chart6 = new Chart($("#chart6")[0].getContext('2d'), cfg6);
 
 export { 
     data1, cfg1, chart1,
     data2, cfg2, chart2,
     data3, cfg3, chart3,
     data4, cfg4, chart4,
+    data5, cfg5, chart5,
+    data6, cfg6, chart6,
 }
