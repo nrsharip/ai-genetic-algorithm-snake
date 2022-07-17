@@ -193,10 +193,10 @@ function render(timeElapsed) {
             break;
         case GAME.PHASES.GAME_STARTED:
         case GAME.PHASES.GAME_RESUMED:
-            const yukaDelta = GAME.yuka.time.update().getDelta();
-            GAME.yuka.entityManager.update( yukaDelta );
+            //const yukaDelta = GAME.yuka.time.update().getDelta();
+            //GAME.yuka.entityManager.update( yukaDelta );
 
-            PHYSICS.update(timeDelta);
+            //PHYSICS.update(timeDelta);
 
             for (let manager of Object.values(GAME.managers)) {
                 if (manager.update) {
