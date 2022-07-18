@@ -92,10 +92,14 @@ palettes.counter = 0;
 
 const bestParents = {
     update(bps) {
-        for (let i = 0; i < bps.chromosomes.length; i++) {
-            let chromosome = bps.chromosomes[i];
-            let index = bps.indices[i];
-            let fitness = snakeGameGATrain.fitness_scores[index];
+        const bpsCopy = [...bps];
+        bpsCopy.sort((a,b) => b.fitness - a.fitness); // descending
+
+        const range = bpsCopy.length < 10 ? bpsCopy.length : 10; // TOP 10
+
+        for (let i = 0; i < range; i++) { 
+            let chromosome = bpsCopy[i].chromosome;
+            let fitness = bpsCopy[i].fitness;
             let generationNum = snakeGameGATrain.num_generations - 1;
     
             if (!this[chromosome]) { this[chromosome] = [] }
@@ -140,8 +144,9 @@ snakeGameGATrain.onGenerationOver = function(average_game_score, average_frame_s
     bestParents.update(bps);
     for (let i = 0; i < snakeGameGATrain.num_generations; i++) { CHARTS.cfg8.data.labels.push(i); }
     for (const [chromosome, infos] of Object.entries(bestParents)) {
-        if (!infos[0] || infos.length < 2) { continue; }
-        if (infos[infos.length - 1].gen < snakeGameGATrain.num_generations - 1) { continue; }
+        if (!infos[0]) { continue; }
+        if (infos.length < 2) { continue; }
+        //if (infos[infos.length - 1].gen < snakeGameGATrain.num_generations - 1) { continue; }
         forDownload.push({ chromosome, infos });
 
         let dataset = {
