@@ -47,8 +47,6 @@ GAME.state.onPhaseChange.push( function(phase) {
         case GAME.PHASES.LOAD_COMPLETED:
             console.log("load completed");
 
-            //setInterval(train, 0);
-
             GAME.state.phase = GAME.PHASES.GAME_STARTED;
             break;
         case GAME.PHASES.GAME_STARTED:
@@ -216,6 +214,7 @@ snakeGameGATrain.onGenerationOver = function(average_game_score, average_frame_s
 }
 
 let trainingStarted = true;
+let drawModels = true;
 
 function train(redraw) {
     if (!trainingStarted) { return; }
@@ -248,7 +247,7 @@ GAME.callbacks.onUpdate = function(delta, elapsed) {
     //     snakeGameGATest.draw_grid_updates();
     // }
     
-    if (snakeGameGATrain.elapsed == 0 || (elapsed - snakeGameGATrain.elapsed > snakeGameGATrain.delay)) {
+    if ( drawModels && (snakeGameGATrain.elapsed == 0 || (elapsed - snakeGameGATrain.elapsed > snakeGameGATrain.delay)) ) {
         snakeGameGATrain.elapsed = elapsed
 
         train(true);
@@ -264,7 +263,25 @@ $("#startStopTraining").click(function () {
     if (trainingStarted) {
         $(this).html("Stop Training");
     } else {
-        $(this).html("Start Training");
+        $(this).html("Resume Training");
+    }
+});
+
+let intervalID = -1;
+$("#startStopDrawing").click(function () {
+    drawModels = !drawModels;
+    if (drawModels) {
+        $(this).html("Draw Models: OFF");
+
+        if (intervalID != -1) {
+            clearInterval(intervalID);
+            intervalID = -1;
+        }
+
+    } else {
+        $(this).html("Draw Models: ON");
+
+        intervalID = setInterval(train, 0);
     }
 });
 
