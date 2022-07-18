@@ -135,10 +135,9 @@ snakeGameGATrain.onGenerationOver = function(average_game_score, average_frame_s
     CHARTS.data7.push({ x: snakeGameGATrain.num_generations - 1, average_fitness: average_fitness });
     CHARTS.cfg7.data.labels.push(snakeGameGATrain.num_generations - 1);
 
-    let forDownload = []
     bestParents.update(bps);
-
     // CHART 8
+    let forDownload = [];
     let entries = Object.entries(bestParents)
         .filter((a) => a[1][0])                                                            // keeping only those with array as a value
         .filter((a) => a[1][a[1].length - 1].gen == snakeGameGATrain.num_generations - 1); // keeping only lasted until this generation
@@ -163,7 +162,16 @@ snakeGameGATrain.onGenerationOver = function(average_game_score, average_frame_s
         CHARTS.cfg8.data.datasets.push(dataset);
     }
 
+    // https://www.codegrepper.com/code-examples/javascript/save+array+file
+    let a = document.getElementById("downloadBestParents1").appendChild(document.createElement("a"));
+    a.download = `best_parents_top5_1_${fileLabel}_gen_${snakeGameGATrain.num_generations}.txt`;
+    a.href = "data:text/plain;base64," + btoa(JSON.stringify(forDownload));
+    a.innerHTML = `${snakeGameGATrain.num_generations}`;
+    let span = document.getElementById("downloadBestParents1").appendChild(document.createElement("span"));
+    span.innerHTML = " • ";
+
     // CHART 9
+    forDownload = [];
     entries = Object.entries(bestParents)
         .filter((a) => a[1][0])                                                           // keeping only those with array as a value
         .filter((a) => a[1][a[1].length - 1].gen == snakeGameGATrain.num_generations - 1) // keeping only lasted until this generation
@@ -176,6 +184,8 @@ snakeGameGATrain.onGenerationOver = function(average_game_score, average_frame_s
         let chromosome = entries[i][0];
         let infos = entries[i][1];
 
+        forDownload.push({ chromosome, infos });
+
         let dataset = {
             label: chromosome.substring(0,8),
             data: [],
@@ -187,6 +197,14 @@ snakeGameGATrain.onGenerationOver = function(average_game_score, average_frame_s
         CHARTS.cfg9.data.datasets.push(dataset);
     }
 
+    // https://www.codegrepper.com/code-examples/javascript/save+array+file
+    a = document.getElementById("downloadBestParents2").appendChild(document.createElement("a"));
+    a.download = `best_parents_top5_2_${fileLabel}_gen_${snakeGameGATrain.num_generations}.txt`;
+    a.href = "data:text/plain;base64," + btoa(JSON.stringify(forDownload));
+    a.innerHTML = `${snakeGameGATrain.num_generations}`;
+    span = document.getElementById("downloadBestParents2").appendChild(document.createElement("span"));
+    span.innerHTML = " • ";
+
     CHARTS.chart5.update();
     CHARTS.chart6.update();
     CHARTS.chart2.update();
@@ -197,20 +215,13 @@ snakeGameGATrain.onGenerationOver = function(average_game_score, average_frame_s
     document.getElementById("bestIndividual").textContent = best_individual;
 
     // https://www.codegrepper.com/code-examples/javascript/save+array+file
-    let a = document.getElementById("downloadPopulation").appendChild(document.createElement("a"));
+    a = document.getElementById("downloadPopulation").appendChild(document.createElement("a"));
     a.download = `population_${fileLabel}_gen_${snakeGameGATrain.num_generations}.txt`;
     a.href = "data:text/plain;base64," + btoa(JSON.stringify(snakeGameGATrain.population));
     a.innerHTML = `${snakeGameGATrain.num_generations}`;
-    let span = document.getElementById("downloadPopulation").appendChild(document.createElement("span"));
+    span = document.getElementById("downloadPopulation").appendChild(document.createElement("span"));
     span.innerHTML = " • ";
 
-    // https://www.codegrepper.com/code-examples/javascript/save+array+file
-    a = document.getElementById("downloadBestParents").appendChild(document.createElement("a"));
-    a.download = `best_parents_${fileLabel}_gen_${snakeGameGATrain.num_generations}.txt`;
-    a.href = "data:text/plain;base64," + btoa(JSON.stringify(forDownload));
-    a.innerHTML = `${snakeGameGATrain.num_generations}`;
-    span = document.getElementById("downloadBestParents").appendChild(document.createElement("span"));
-    span.innerHTML = " • ";
 }
 
 let trainingStarted = true;
