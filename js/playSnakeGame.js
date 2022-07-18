@@ -136,12 +136,16 @@ snakeGameGATrain.onGenerationOver = function(average_game_score, average_frame_s
     CHARTS.data7.push({ x: snakeGameGATrain.num_generations - 1, average_fitness: average_fitness });
     CHARTS.cfg7.data.labels.push(snakeGameGATrain.num_generations - 1);
 
+    let forDownload = []
     bestParents.update(bps);
     for (let i = 0; i < snakeGameGATrain.num_generations; i++) { CHARTS.cfg8.data.labels.push(i); }
     for (const [chromosome, infos] of Object.entries(bestParents)) {
         if (!infos[0] || infos.length < 2) { continue; }
+        if (infos[infos.length - 1].gen < snakeGameGATrain.num_generations - 1) { continue; }
+        forDownload.push({ chromosome, infos });
+
         let dataset = {
-            label: chromosome.substring(0,16),
+            label: chromosome.substring(0,8),
             data: [],
             borderColor: palettes[palettes.counter % palettes.length],
             backgroundColor: palettes[palettes.counter++ % palettes.length],
@@ -165,6 +169,14 @@ snakeGameGATrain.onGenerationOver = function(average_game_score, average_frame_s
     a.href = "data:text/plain;base64," + btoa(JSON.stringify(snakeGameGATrain.population));
     a.innerHTML = `${snakeGameGATrain.num_generations}`;
     let span = document.getElementById("downloadPopulation").appendChild(document.createElement("span"));
+    span.innerHTML = " • ";
+
+    // https://www.codegrepper.com/code-examples/javascript/save+array+file
+    a = document.getElementById("downloadBestParents").appendChild(document.createElement("a"));
+    a.download = `best_parents_${fileLabel}_gen_${snakeGameGATrain.num_generations}.txt`;
+    a.href = "data:text/plain;base64," + btoa(JSON.stringify(forDownload));
+    a.innerHTML = `${snakeGameGATrain.num_generations}`;
+    span = document.getElementById("downloadBestParents").appendChild(document.createElement("span"));
     span.innerHTML = " • ";
 }
 
