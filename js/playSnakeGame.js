@@ -130,13 +130,15 @@ function train(redraw) {
     if (redraw) { snakeGameGATrain.draw_grid_updates(); }
 }
 
+let trainingStarted = false;
+
 GAME.callbacks.onUpdate = function(delta, elapsed) {
     
     // if (snakeGame.elapsed == 0 || (elapsed - snakeGame.elapsed > snakeGame.delay)) {
     //     snakeGame.elapsed = elapsed
     // if (snakeGameGATest.elapsed == 0 || (elapsed - snakeGameGATest.elapsed > snakeGameGATest.delay)) {
     //     snakeGameGATest.elapsed = elapsed
-    if (snakeGameGATrain.elapsed == 0 || (elapsed - snakeGameGATrain.elapsed > snakeGameGATrain.delay)) {
+    if ( trainingStarted && (snakeGameGATrain.elapsed == 0 || (elapsed - snakeGameGATrain.elapsed > snakeGameGATrain.delay)) ) {
         snakeGameGATrain.elapsed = elapsed
 
         // snakeGame.move_snake(keys);
@@ -161,5 +163,14 @@ GAME.callbacks.onUpdate = function(delta, elapsed) {
 GAME.callbacks.onKeyDown = function(event) {
     keys.push(event.code);
 }
+
+$("#startStopTraining").click(function () {
+    trainingStarted = !trainingStarted;
+    if (trainingStarted) {
+        $(this).html("Stop Training");
+    } else {
+        $(this).html("Start Training");
+    }
+});
 
 GAME.state.phase = GAME.PHASES.INIT;
