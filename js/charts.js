@@ -128,26 +128,40 @@ const cfg7 = {
 
 const cfg8 = {
     type: 'line',
-    data: {
-        labels: [],
-        datasets: []
-    },
+    data: { labels: [], datasets: [] },
     // https://www.chartjs.org/docs/3.8.0/samples/line/multi-axis.html
     options: {
         responsive: true,
-        scales: {
-            y: { type: 'linear', display: true, position: 'left', },
-        },
+        scales: { y: { type: 'linear', display: true, position: 'left', }, },
         plugins: {
             legend: {
-                display: false,
+                display: true,
             },
             title: {
               display: true,
-              text: 'Best Parents (TOP-10 lasted longer)'
+              text: 'Best Parents (TOP-5 lasted longer up to current generation)'
             }
         }
     }
+};
+
+const cfg9 = {
+  type: 'line',
+  data: { labels: [], datasets: [] },
+  // https://www.chartjs.org/docs/3.8.0/samples/line/multi-axis.html
+  options: {
+      responsive: true,
+      scales: { y: { type: 'linear', display: true, position: 'left', }, },
+      plugins: {
+          legend: {
+              display: true,
+          },
+          title: {
+            display: true,
+            text: 'Best Parents (TOP-5 lasted at least 10 generations up until now and sorted by fitness)'
+          }
+      }
+  }
 };
 
 const data2 = [];
@@ -184,6 +198,7 @@ const chart5 = new Chart($("#chart5")[0].getContext('2d'), cfg5);
 const chart6 = new Chart($("#chart6")[0].getContext('2d'), cfg6);
 const chart7 = new Chart($("#chart7")[0].getContext('2d'), cfg7);
 const chart8 = new Chart($("#chart8")[0].getContext('2d'), cfg8);
+const chart9 = new Chart($("#chart9")[0].getContext('2d'), cfg9);
 
 export { 
     data1, cfg1, chart1,
@@ -194,4 +209,5 @@ export {
     data6, cfg6, chart6,
     data7, cfg7, chart7,
            cfg8, chart8,
+           cfg9, chart9,
 }

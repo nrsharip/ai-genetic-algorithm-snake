@@ -119,6 +119,8 @@ snakeGameGATrain.onGenerationOver = function(average_game_score, average_frame_s
 
     CHARTS.cfg8.data.labels.length = 0
     CHARTS.cfg8.data.datasets.length = 0
+    CHARTS.cfg9.data.labels.length = 0
+    CHARTS.cfg9.data.datasets.length = 0
 
     for (let i = 0; i < fitnessRatios.length; i++) {
         CHARTS.data5.push({ x: i, ratio: fitnessRatios[i] });
@@ -137,14 +139,16 @@ snakeGameGATrain.onGenerationOver = function(average_game_score, average_frame_s
 
     let forDownload = []
     bestParents.update(bps);
-    
-    const entries = Object.entries(bestParents)
-        .filter((a) => a[1][0]) // keeping only those with array as a value
-        .filter((a) => a[1][a[1].length - 1].gen == snakeGameGATrain.num_generations - 1);
+
+    // CHART 8
+    let entries = Object.entries(bestParents)
+        .filter((a) => a[1][0])                                                            // keeping only those with array as a value
+        .filter((a) => a[1][a[1].length - 1].gen == snakeGameGATrain.num_generations - 1); // keeping only lasted until this generation
     // entry[0] - key (chromosome); entry[1] - value ({gen: N, fitness: S});
     entries.sort((a, b) => b[1].length - a[1].length); // sorting descending by the number of generations
+    let range = entries.length < 5 ? entries.length : 5; // taking top-5 results of sort
     for (let i = 0; i < snakeGameGATrain.num_generations; i++) { CHARTS.cfg8.data.labels.push(i); }
-    for (let i = 0; i < 10; i++) { // taking top-10 results of sort
+    for (let i = 0; i < range; i++) { // taking top-5 results of sort
         let chromosome = entries[i][0];
         let infos = entries[i][1];
 
@@ -161,11 +165,36 @@ snakeGameGATrain.onGenerationOver = function(average_game_score, average_frame_s
         CHARTS.cfg8.data.datasets.push(dataset);
     }
 
+    // CHART 9
+    entries = Object.entries(bestParents)
+        .filter((a) => a[1][0])                                                           // keeping only those with array as a value
+        .filter((a) => a[1][a[1].length - 1].gen == snakeGameGATrain.num_generations - 1) // keeping only lasted until this generation
+        .filter((a) => a[1].length >= 10);                                                // keeping those lasted at least 10 generations
+    // entry[0] - key (chromosome); entry[1] - value ({gen: N, fitness: S});
+    entries.sort((a, b) => b[1][b[1].length - 1].fitness - a[1][a[1].length - 1].fitness); // sorting descending by fitness
+    range = entries.length < 5 ? entries.length : 5; // taking top-5 results of sort
+    for (let i = 0; i < snakeGameGATrain.num_generations; i++) { CHARTS.cfg9.data.labels.push(i); }
+    for (let i = 0; i < range; i++) { 
+        let chromosome = entries[i][0];
+        let infos = entries[i][1];
+
+        let dataset = {
+            label: chromosome.substring(0,8),
+            data: [],
+            borderColor: palettes[palettes.counter % palettes.length],
+            backgroundColor: palettes[palettes.counter++ % palettes.length],
+            yAxisID: 'y',
+        }
+        for (const info of infos) { dataset.data.push({ x: info.gen, y: info.fitness }); }
+        CHARTS.cfg9.data.datasets.push(dataset);
+    }
+
     CHARTS.chart5.update();
     CHARTS.chart6.update();
     CHARTS.chart2.update();
     CHARTS.chart7.update();
     CHARTS.chart8.update();
+    CHARTS.chart9.update();
 
     document.getElementById("bestIndividual").textContent = best_individual;
 
