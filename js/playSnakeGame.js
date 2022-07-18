@@ -3,6 +3,8 @@ import * as GA from './AI-for-Snake-Game/geneticAlgorithm.js';
 
 import * as CHARTS from './charts.js'
 
+import * as POPS from './populations.js'
+
 import SnakeGame from './AI-for-Snake-Game/snakeGame.js';
 import SnakeGameGATest from './AI-for-Snake-Game/snakeGameGATest.js';
 import SnakeGameGATrain from './AI-for-Snake-Game/snakeGameGATrain.js';
@@ -22,7 +24,8 @@ let num_outputs = 4;
 
 let chroms_per_gen = 200;
 let total_bits = ((num_inputs + 1) * num_hiddens + num_hiddens * (num_hiddens + 1) + num_outputs * (num_hiddens + 1)) * bits_per_weight;
-let population = GA.genPopulation(chroms_per_gen, total_bits)
+let population = POPS.population_20220718_001050_gen_109;
+//let population = GA.genPopulation(chroms_per_gen, total_bits);
 
 const snakeGame = new SnakeGame(500);
 const snakeGameGATest = new SnakeGameGATest(25, chromosome, bits_per_weight, num_inputs, num_hiddens, num_outputs);
@@ -115,7 +118,7 @@ snakeGameGATrain.onGenerationOver = function(num_generations, average_game_score
 
     // https://www.codegrepper.com/code-examples/javascript/save+array+file
     let a = document.getElementById("downloadPopulation").appendChild(document.createElement("a"));
-    a.download = `population_${fileLabel}.gen_${snakeGameGATrain.num_generations}.txt`;
+    a.download = `population_${fileLabel}_gen_${snakeGameGATrain.num_generations}.txt`;
     a.href = "data:text/plain;base64," + btoa(JSON.stringify(snakeGameGATrain.population));
     a.innerHTML = `${snakeGameGATrain.num_generations}`;
     let span = document.getElementById("downloadPopulation").appendChild(document.createElement("span"));
@@ -136,27 +139,27 @@ GAME.callbacks.onUpdate = function(delta, elapsed) {
     
     // if (snakeGame.elapsed == 0 || (elapsed - snakeGame.elapsed > snakeGame.delay)) {
     //     snakeGame.elapsed = elapsed
+
+    //     snakeGame.move_snake(keys);
+    //     snakeGame.check_collisions();
+    //     snakeGame.draw_grid_updates();
+
+    //     keys.length = 0;
+    // }
+    
     // if (snakeGameGATest.elapsed == 0 || (elapsed - snakeGameGATest.elapsed > snakeGameGATest.delay)) {
     //     snakeGameGATest.elapsed = elapsed
+
+    //     snakeGameGATest.move_snake(keys);
+    //     snakeGameGATest.check_collisions();
+    //     snakeGameGATest.update_frames_since_last_fruit();
+    //     snakeGameGATest.draw_grid_updates();
+    // }
+    
     if ( trainingStarted && (snakeGameGATrain.elapsed == 0 || (elapsed - snakeGameGATrain.elapsed > snakeGameGATrain.delay)) ) {
         snakeGameGATrain.elapsed = elapsed
 
-        // snakeGame.move_snake(keys);
-        // snakeGame.check_collisions();
-        // snakeGame.draw_grid_updates();
-
-        // snakeGameGATest.move_snake(keys);
-        // snakeGameGATest.check_collisions();
-        // snakeGameGATest.update_frames_since_last_fruit();
-        // snakeGameGATest.draw_grid_updates();
-
-        snakeGameGATrain.move_snake(keys);
-        snakeGameGATrain.check_collisions();
-        snakeGameGATrain.update_frames_since_last_fruit();
-        snakeGameGATrain.frames_alive++;
-        snakeGameGATrain.draw_grid_updates();
-
-        keys.length = 0;
+        train(true);
     }
 }
 
