@@ -144,7 +144,7 @@ const cfg8 = {
             },
             title: {
               display: true,
-              text: 'Best Parents (lasting over generations)'
+              text: 'Best Parents (TOP-10 lasted longer)'
             }
         }
     }
