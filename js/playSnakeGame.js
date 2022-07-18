@@ -31,7 +31,9 @@ const snakeGame = new SnakeGame(500);
 const snakeGameGATest = new SnakeGameGATest(25, chromosome, bits_per_weight, num_inputs, num_hiddens, num_outputs);
 const snakeGameGATrain = new SnakeGameGATrain(0, population, chroms_per_gen, bits_per_weight, num_inputs, num_hiddens, num_outputs);
 
-window.snake = snakeGameGATrain;
+window.snakeGame = snakeGame;
+window.snakeGameGATest = snakeGameGATest;
+window.snakeGameGATrain = snakeGameGATrain;
 window.CHARTS = CHARTS;
 
 GAME.state.onPhaseChange.push( function(phase) {
@@ -81,7 +83,29 @@ snakeGameGATrain.onGameOver = function(num_generations, cur_chrom, score, frames
     document.getElementById("high_score").textContent = `HIGHSCORE: ${snakeGameGATrain.high_score}`;
 }
 
-snakeGameGATrain.onGenerationOver = function(num_generations, average_game_score, average_frame_score, average_fitness, best_individual, fitnessRatios, fitnessRouletteCutoffs) {
+const palettes = [
+    '#f3a935', '#c73558', '#6ebe9f', '#2586a4', '#55596a', // https://www.color-hex.com/color-palette/32566
+    '#fe0000', '#fdfe02', '#0bff01', '#011efe', '#fe00f6', // https://www.color-hex.com/color-palette/1131
+    '#feda75', '#fa7e1e', '#d62976', '#962fbf', '#4f5bd5', // https://www.color-hex.com/color-palette/44340
+]
+palettes.counter = 0;
+
+const bestParents = {
+    update(bps) {
+        for (let i = 0; i < bps.chromosomes.length; i++) {
+            let chromosome = bps.chromosomes[i];
+            let index = bps.indices[i];
+            let fitness = snakeGameGATrain.fitness_scores[index];
+            let generationNum = snakeGameGATrain.num_generations - 1;
+    
+            if (!this[chromosome]) { this[chromosome] = [] }
+            this[chromosome].push({ gen: generationNum, fitness: fitness});
+        }
+    }
+};
+window.bestParents = bestParents;
+
+snakeGameGATrain.onGenerationOver = function(average_game_score, average_frame_score, average_fitness, best_individual, fitnessRatios, fitnessRouletteCutoffs, bps) {
     CHARTS.data1.length = 0
     CHARTS.cfg1.data.labels.length = 0
     CHARTS.data3.length = 0
@@ -94,6 +118,9 @@ snakeGameGATrain.onGenerationOver = function(num_generations, average_game_score
     CHARTS.data6.length = 0
     CHARTS.cfg6.data.labels.length = 0
 
+    CHARTS.cfg8.data.labels.length = 0
+    CHARTS.cfg8.data.datasets.length = 0
+
     for (let i = 0; i < fitnessRatios.length; i++) {
         CHARTS.data5.push({ x: i, ratio: fitnessRatios[i] });
         CHARTS.cfg5.data.labels.push(i);
@@ -103,16 +130,32 @@ snakeGameGATrain.onGenerationOver = function(num_generations, average_game_score
         CHARTS.cfg6.data.labels.push(i);
     }
 
-    CHARTS.data2.push({ x: num_generations, average_game_score: average_game_score, average_frame_score: average_frame_score });
-    CHARTS.cfg2.data.labels.push(num_generations);
+    CHARTS.data2.push({ x: snakeGameGATrain.num_generations - 1, average_game_score: average_game_score, average_frame_score: average_frame_score });
+    CHARTS.cfg2.data.labels.push(snakeGameGATrain.num_generations - 1);
     
-    CHARTS.data7.push({ x: num_generations, average_fitness: average_fitness });
-    CHARTS.cfg7.data.labels.push(num_generations);
+    CHARTS.data7.push({ x: snakeGameGATrain.num_generations - 1, average_fitness: average_fitness });
+    CHARTS.cfg7.data.labels.push(snakeGameGATrain.num_generations - 1);
+
+    bestParents.update(bps);
+    for (let i = 0; i < snakeGameGATrain.num_generations; i++) { CHARTS.cfg8.data.labels.push(i); }
+    for (const [chromosome, infos] of Object.entries(bestParents)) {
+        if (!infos[0] || infos.length < 2) { continue; }
+        let dataset = {
+            label: chromosome.substring(0,16),
+            data: [],
+            borderColor: palettes[palettes.counter % palettes.length],
+            backgroundColor: palettes[palettes.counter++ % palettes.length],
+            yAxisID: 'y',
+        }
+        for (const info of infos) { dataset.data.push({ x: info.gen, y: info.fitness }); }
+        CHARTS.cfg8.data.datasets.push(dataset);
+    }
 
     CHARTS.chart5.update();
     CHARTS.chart6.update();
     CHARTS.chart2.update();
     CHARTS.chart7.update();
+    CHARTS.chart8.update();
 
     document.getElementById("bestIndividual").textContent = best_individual;
 
@@ -125,15 +168,17 @@ snakeGameGATrain.onGenerationOver = function(num_generations, average_game_score
     span.innerHTML = " • ";
 }
 
+let trainingStarted = true;
+
 function train(redraw) {
+    if (!trainingStarted) { return; }
+
     snakeGameGATrain.move_snake(keys);
     snakeGameGATrain.check_collisions();
     snakeGameGATrain.update_frames_since_last_fruit();
     snakeGameGATrain.frames_alive++;
     if (redraw) { snakeGameGATrain.draw_grid_updates(); }
 }
-
-let trainingStarted = false;
 
 GAME.callbacks.onUpdate = function(delta, elapsed) {
     
@@ -156,7 +201,7 @@ GAME.callbacks.onUpdate = function(delta, elapsed) {
     //     snakeGameGATest.draw_grid_updates();
     // }
     
-    if ( trainingStarted && (snakeGameGATrain.elapsed == 0 || (elapsed - snakeGameGATrain.elapsed > snakeGameGATrain.delay)) ) {
+    if (snakeGameGATrain.elapsed == 0 || (elapsed - snakeGameGATrain.elapsed > snakeGameGATrain.delay)) {
         snakeGameGATrain.elapsed = elapsed
 
         train(true);

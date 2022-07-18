@@ -33,7 +33,7 @@ export function createNextGeneration(parentPop, fitnessScores) {
     const bestParents = extractBestParents(parentPop, fitnessScores)
 
     // Create a child population the same size as the parent population
-    for (let i = 0; i < parentPop.length - bestParents.length; i++) { // CHECK
+    for (let i = 0; i < parentPop.length - bestParents.chromosomes.length; i++) { // CHECK
         // Selection
         let selectedPair = selection(parentPop, fitnessRouletteCutoffs)
         // Crossover
@@ -45,7 +45,7 @@ export function createNextGeneration(parentPop, fitnessScores) {
     }
 
     // Combine the best parents from the old generation with the new generation
-    childPop.push(...bestParents);
+    childPop.push(...bestParents.chromosomes);
 
     return { 
         next_generation: childPop, 
@@ -54,6 +54,7 @@ export function createNextGeneration(parentPop, fitnessScores) {
         average_fitness: averageFitness,
         fitnessRatios: fitnessRatios,
         fitnessRouletteCutoffs: fitnessRouletteCutoffs,
+        bestParents: bestParents,
     }
 }
 
@@ -94,12 +95,13 @@ export function extractBestParents(parentPop, fitnessScores) {
     // Get a cutoff value for the median fitness score
     const bestScoresCutoff = fitnessScoresCopy[bestScoresCutoffIndex]
 
-    const bestParents = []
+    const bestParents = { chromosomes: [], indices: [] }
 
     // Find the chromsomes with fitness scores above the cutoff
     for (let i = 0; i < parentPop.length; i++) {
         if (fitnessScores[i] > bestScoresCutoff) {
-            bestParents.push(parentPop[i])
+            bestParents.chromosomes.push(parentPop[i])
+            bestParents.indices.push(i);
         }
     }
     return bestParents

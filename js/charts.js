@@ -126,6 +126,30 @@ const cfg7 = {
       }
 };
 
+const cfg8 = {
+    type: 'line',
+    data: {
+        labels: [],
+        datasets: []
+    },
+    // https://www.chartjs.org/docs/3.8.0/samples/line/multi-axis.html
+    options: {
+        responsive: true,
+        scales: {
+            y: { type: 'linear', display: true, position: 'left', },
+        },
+        plugins: {
+            legend: {
+                display: false,
+            },
+            title: {
+              display: true,
+              text: 'Best Parents (lasting over generations)'
+            }
+        }
+    }
+};
+
 const data2 = [];
 const cfg2 = {
     type: 'bar',
@@ -159,6 +183,7 @@ const chart4 = new Chart($("#chart4")[0].getContext('2d'), cfg4);
 const chart5 = new Chart($("#chart5")[0].getContext('2d'), cfg5);
 const chart6 = new Chart($("#chart6")[0].getContext('2d'), cfg6);
 const chart7 = new Chart($("#chart7")[0].getContext('2d'), cfg7);
+const chart8 = new Chart($("#chart8")[0].getContext('2d'), cfg8);
 
 export { 
     data1, cfg1, chart1,
@@ -168,4 +193,5 @@ export {
     data5, cfg5, chart5,
     data6, cfg6, chart6,
     data7, cfg7, chart7,
+           cfg8, chart8,
 }
