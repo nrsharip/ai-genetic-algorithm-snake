@@ -177,7 +177,12 @@ snakeGameGATrain.onGenerationOver = function(average_game_score, average_frame_s
         .filter((a) => a[1][a[1].length - 1].gen == snakeGameGATrain.num_generations - 1) // keeping only lasted until this generation
         .filter((a) => a[1].length >= 10);                                                // keeping those lasted at least 10 generations
     // entry[0] - key (chromosome); entry[1] - value ({gen: N, fitness: S});
-    entries.sort((a, b) => b[1][b[1].length - 1].fitness - a[1][a[1].length - 1].fitness); // sorting descending by fitness
+    entries.sort((a, b) => { // sorting descending by fitness averages
+        const avgA = a[1].map((element, index, array) => element.fitness).reduce((sum, a) => sum + a, 0) / a[1].length;
+        const avgB = b[1].map((element, index, array) => element.fitness).reduce((sum, a) => sum + a, 0) / b[1].length;
+        
+        return avgB - avgA;
+    }); 
     range = entries.length < 5 ? entries.length : 5; // taking top-5 results of sort
     for (let i = 0; i < snakeGameGATrain.num_generations; i++) { CHARTS.cfg9.data.labels.push(i); }
     for (let i = 0; i < range; i++) { 
