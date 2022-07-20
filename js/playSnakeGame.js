@@ -89,6 +89,7 @@ const palettes = [
 palettes.counter = 0;
 
 const bestParents = {
+    longest: 0,
     update(bps) {
         for (let i = 0; i < bps.length; i++) { 
             let chromosome = bps[i].chromosome;
@@ -97,12 +98,16 @@ const bestParents = {
     
             if (!this[chromosome]) { this[chromosome] = [] }
             this[chromosome].push({ gen: generationNum, fitness: fitness});
+
+            if (this[chromosome].length > this.longest) { this.longest = this[chromosome].length; }
         }
     }
 };
 window.bestParents = bestParents;
 
 snakeGameGATrain.onGenerationOver = function(average_game_score, average_frame_score, average_fitness, best_individual, fitnessRatios, fitnessRouletteCutoffs, bps) {
+    let cur_gen = snakeGameGATrain.num_generations;
+    
     CHARTS.data1.length = 0
     CHARTS.cfg1.data.labels.length = 0
     CHARTS.data3.length = 0
@@ -129,22 +134,26 @@ snakeGameGATrain.onGenerationOver = function(average_game_score, average_frame_s
         CHARTS.cfg6.data.labels.push(i);
     }
 
-    CHARTS.data2.push({ x: snakeGameGATrain.num_generations - 1, average_game_score: average_game_score, average_frame_score: average_frame_score });
-    CHARTS.cfg2.data.labels.push(snakeGameGATrain.num_generations - 1);
+    CHARTS.data2.push({ x: cur_gen - 1, average_game_score: average_game_score, average_frame_score: average_frame_score });
+    CHARTS.cfg2.data.labels.push(cur_gen - 1);
     
-    CHARTS.data7.push({ x: snakeGameGATrain.num_generations - 1, average_fitness: average_fitness });
-    CHARTS.cfg7.data.labels.push(snakeGameGATrain.num_generations - 1);
+    CHARTS.data7.push({ x: cur_gen - 1, average_fitness: average_fitness });
+    CHARTS.cfg7.data.labels.push(cur_gen - 1);
 
     bestParents.update(bps);
     // CHART 8
     let forDownload = [];
     let entries = Object.entries(bestParents)
-        .filter((a) => a[1][0])                                                            // keeping only those with array as a value
-        .filter((a) => a[1][a[1].length - 1].gen == snakeGameGATrain.num_generations - 1); // keeping only lasted until this generation
+        .filter((a) => a[1][0])                                   // keeping only those with array as a value
+        .filter((a) => a[1][a[1].length - 1].gen == cur_gen - 1); // keeping only lasted until this generation
     // entry[0] - key (chromosome); entry[1] - value ({gen: N, fitness: S});
-    entries.sort((a, b) => b[1].length - a[1].length); // sorting descending by the number of generations
+    entries.sort((a, b) => b[1].length - a[1].length);   // sorting descending by the number of generations
+    
+    let bottom = Math.floor(cur_gen - bestParents.longest * 1.1);
+    let top = Math.ceil(cur_gen + bestParents.longest * 0.1);
+    for (let i = bottom; i < top; i++) { CHARTS.cfg8.data.labels.push(i); }
+
     let range = entries.length < 5 ? entries.length : 5; // taking top-5 results of sort
-    for (let i = 0; i < snakeGameGATrain.num_generations; i++) { CHARTS.cfg8.data.labels.push(i); }
     for (let i = 0; i < range; i++) { // taking top-5 results of sort
         let chromosome = entries[i][0];
         let infos = entries[i][1];
@@ -164,18 +173,18 @@ snakeGameGATrain.onGenerationOver = function(average_game_score, average_frame_s
 
     // https://www.codegrepper.com/code-examples/javascript/save+array+file
     let a = document.getElementById("downloadBestParents1").appendChild(document.createElement("a"));
-    a.download = `best_parents_top5_1_${fileLabel}_gen_${snakeGameGATrain.num_generations}.txt`;
+    a.download = `best_parents_top5_1_${fileLabel}_gen_${cur_gen}.txt`;
     a.href = "data:text/plain;base64," + btoa(JSON.stringify(forDownload));
-    a.innerHTML = `${snakeGameGATrain.num_generations}`;
+    a.innerHTML = `${cur_gen}`;
     let span = document.getElementById("downloadBestParents1").appendChild(document.createElement("span"));
     span.innerHTML = " • ";
 
     // CHART 9
     forDownload = [];
     entries = Object.entries(bestParents)
-        .filter((a) => a[1][0])                                                           // keeping only those with array as a value
-        .filter((a) => a[1][a[1].length - 1].gen == snakeGameGATrain.num_generations - 1) // keeping only lasted until this generation
-        .filter((a) => a[1].length >= 10);                                                // keeping those lasted at least 10 generations
+        .filter((a) => a[1][0])                                  // keeping only those with array as a value
+        .filter((a) => a[1][a[1].length - 1].gen == cur_gen - 1) // keeping only lasted until this generation
+        .filter((a) => a[1].length >= 10);                       // keeping those lasted at least 10 generations
     // entry[0] - key (chromosome); entry[1] - value ({gen: N, fitness: S});
     entries.sort((a, b) => { // sorting descending by fitness averages
         const avgA = a[1].map((element, index, array) => element.fitness).reduce((sum, a) => sum + a, 0) / a[1].length;
@@ -183,8 +192,12 @@ snakeGameGATrain.onGenerationOver = function(average_game_score, average_frame_s
         
         return avgB - avgA;
     }); 
+    
+    bottom = Math.floor(cur_gen - bestParents.longest * 1.1);
+    top = Math.ceil(cur_gen + bestParents.longest * 0.1);
+    for (let i = bottom; i < top; i++) { CHARTS.cfg9.data.labels.push(i); }
+    
     range = entries.length < 5 ? entries.length : 5; // taking top-5 results of sort
-    for (let i = 0; i < snakeGameGATrain.num_generations; i++) { CHARTS.cfg9.data.labels.push(i); }
     for (let i = 0; i < range; i++) { 
         let chromosome = entries[i][0];
         let infos = entries[i][1];
@@ -204,9 +217,9 @@ snakeGameGATrain.onGenerationOver = function(average_game_score, average_frame_s
 
     // https://www.codegrepper.com/code-examples/javascript/save+array+file
     a = document.getElementById("downloadBestParents2").appendChild(document.createElement("a"));
-    a.download = `best_parents_top5_2_${fileLabel}_gen_${snakeGameGATrain.num_generations}.txt`;
+    a.download = `best_parents_top5_2_${fileLabel}_gen_${cur_gen}.txt`;
     a.href = "data:text/plain;base64," + btoa(JSON.stringify(forDownload));
-    a.innerHTML = `${snakeGameGATrain.num_generations}`;
+    a.innerHTML = `${cur_gen}`;
     span = document.getElementById("downloadBestParents2").appendChild(document.createElement("span"));
     span.innerHTML = " • ";
 
@@ -221,9 +234,9 @@ snakeGameGATrain.onGenerationOver = function(average_game_score, average_frame_s
 
     // https://www.codegrepper.com/code-examples/javascript/save+array+file
     a = document.getElementById("downloadPopulation").appendChild(document.createElement("a"));
-    a.download = `population_${fileLabel}_gen_${snakeGameGATrain.num_generations}.txt`;
+    a.download = `population_${fileLabel}_gen_${cur_gen}.txt`;
     a.href = "data:text/plain;base64," + btoa(JSON.stringify(snakeGameGATrain.population));
-    a.innerHTML = `${snakeGameGATrain.num_generations}`;
+    a.innerHTML = `${cur_gen}`;
     span = document.getElementById("downloadPopulation").appendChild(document.createElement("span"));
     span.innerHTML = " • ";
 
