@@ -147,7 +147,13 @@ snakeGameGATrain.onGenerationOver = function(average_game_score, average_frame_s
         .filter((a) => a[1][0])                                   // keeping only those with array as a value
         .filter((a) => a[1][a[1].length - 1].gen == cur_gen - 1); // keeping only lasted until this generation
     // entry[0] - key (chromosome); entry[1] - value ({gen: N, fitness: S});
-    entries.sort((a, b) => b[1].length - a[1].length);   // sorting descending by the number of generations
+    entries.sort((a, b) => {
+        const avgA = a[1].map((element, index, array) => element.fitness).reduce((sum, a) => sum + a, 0) / a[1].length;
+        const avgB = b[1].map((element, index, array) => element.fitness).reduce((sum, a) => sum + a, 0) / b[1].length;
+        
+        // https://stackoverflow.com/questions/10759018/how-can-i-reliably-subsort-arrays-using-dom-methods
+        return (b[1].length - a[1].length) || (avgB - avgA);
+    });   // sorting descending by the number of generations and by the average fitness
     
     let bottom = Math.floor(cur_gen - bestParents.longest * 1.1);
     let top = Math.ceil(cur_gen + bestParents.longest * 0.1);
@@ -182,9 +188,9 @@ snakeGameGATrain.onGenerationOver = function(average_game_score, average_frame_s
     // CHART 9
     forDownload = [];
     entries = Object.entries(bestParents)
-        .filter((a) => a[1][0])                                  // keeping only those with array as a value
-        .filter((a) => a[1][a[1].length - 1].gen == cur_gen - 1) // keeping only lasted until this generation
-        .filter((a) => a[1].length >= 10);                       // keeping those lasted at least 10 generations
+        .filter((a) => a[1][0])                                     // keeping only those with array as a value
+        .filter((a) => a[1][a[1].length - 1].gen == cur_gen - 1)    // keeping only lasted until this generation
+        .filter((a) => a[1].length >= bestParents.longest * (1/3)); // keeping those lasted at least 1/3 of the longest living
     // entry[0] - key (chromosome); entry[1] - value ({gen: N, fitness: S});
     entries.sort((a, b) => { // sorting descending by fitness averages
         const avgA = a[1].map((element, index, array) => element.fitness).reduce((sum, a) => sum + a, 0) / a[1].length;

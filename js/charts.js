@@ -139,7 +139,7 @@ const cfg8 = {
             },
             title: {
               display: true,
-              text: 'Best Parents (TOP-5 lasted longer up to current generation)'
+              text: 'Best Parents (TOP-5 lasted longer up to current generation and sorted by average fitness)'
             }
         }
     }
@@ -158,7 +158,7 @@ const cfg9 = {
           },
           title: {
             display: true,
-            text: 'Best Parents (TOP-5 lasted at least 10 generations up until now and sorted by fitness)'
+            text: 'Best Parents (TOP-5 lasted at least 1/3 of the longest living chromosome up until now and sorted by average fitness)'
           }
       }
   }
