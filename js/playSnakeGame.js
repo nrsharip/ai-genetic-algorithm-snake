@@ -95,10 +95,10 @@ snakeGameGATrain.onGameOver = function(num_generations, cur_chrom, score, frames
     CHARTS.chart3.update();
     CHARTS.chart4.update();
 
-    document.getElementById("generation").textContent = `GENERATION: ${snakeGameGATrain.num_generations}`;
-    document.getElementById("chromosome").textContent = `CHROMOSOME: ${snakeGameGATrain.cur_chrom}`;
-    document.getElementById("score").textContent = `SCORE: ${snakeGameGATrain.score}`;
-    document.getElementById("high_score").textContent = `HIGHSCORE: ${snakeGameGATrain.high_score}`;
+    $("#generation").html(`GENERATION: ${snakeGameGATrain.num_generations}`);
+    $("#chromosome").html(`CHROM: ${snakeGameGATrain.cur_chrom} / ${chroms_per_gen}`);
+    $("#score").html(`SCORE: ${snakeGameGATrain.score}`);
+    $("#high_score").html(`HIGHSCORE: ${snakeGameGATrain.high_score}`);
 }
 
 const palettes = [
@@ -290,6 +290,15 @@ GAME.callbacks.onUpdate = function(delta, elapsed) {
         snakeGame.check_collisions();
         snakeGame.draw_grid_updates();
 
+        $("#generation").html(``);
+        $("#chromosome").html(``);
+        $("#score").html(`SCORE: ${snakeGame.score}`);
+        $("#high_score").html(`HIGHSCORE: ${snakeGame.high_score}`);
+
+        if (snakeGame.restart) {
+            snakeGame.restart = false;
+        }
+
         keys.length = 0;
     }
     
@@ -300,6 +309,16 @@ GAME.callbacks.onUpdate = function(delta, elapsed) {
         snakeGameGATest.check_collisions();
         snakeGameGATest.update_frames_since_last_fruit();
         snakeGameGATest.draw_grid_updates();
+
+        $("#generation").html(``);
+        $("#chromosome").html(``);
+        $("#score").html(`SCORE: ${snakeGameGATest.score}`);
+        $("#high_score").html(`HIGHSCORE: ${snakeGameGATest.high_score}`);
+
+        if (snakeGameGATest.restart) {
+            snakeGameGATest.restart = false;
+        }
+
     }
     
     if ( isTraining && drawModels && (snakeGameGATrain.elapsed == 0 || (elapsed - snakeGameGATrain.elapsed > snakeGameGATrain.delay)) ) {
