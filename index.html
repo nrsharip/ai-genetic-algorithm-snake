@@ -113,14 +113,27 @@
 	<body>
 		<div class="container m-0"> <!-- for m-0 see: https://getbootstrap.com/docs/4.0/utilities/spacing/--> 
 			<div class="row">
-				<div class="col-7 text-center">
+				<div class="col-7 text-center m-0 p-0">
 					<div class="container m-0 p-0">
 						<div class="row m-0 p-0">
 							<div class="col m-0 p-0">
-								<button id="startStopTraining" type="button" class="btn btn-outline-primary">Stop Training</button>
+								<button id="trainButton" style="width:100%" type="button" class="btn btn-danger">TRAIN</button>
 							</div>
 							<div class="col m-0 p-0">
-								<button id="startStopDrawing" type="button" class="btn btn-outline-primary">Draw Models: OFF</button>
+								<button id="testButton" style="width:100%" type="button" class="btn btn-warning">TEST</button>
+							</div>
+							<div class="col m-0 p-0">
+								<button id="playButton" style="width:100%" type="button" class="btn btn-success">PLAY</button>
+							</div>
+						</div>
+					</div>
+					<div id="trainTab" style="display:none;" class="container m-0 p-0">
+						<div class="row m-0 p-0">
+							<div class="col m-0 p-0">
+								<button id="startStopTraining" type="button" class="btn btn-outline-primary btn-sm">Training: OFF</button>
+							</div>
+							<div class="col m-0 p-0">
+								<button id="startStopDrawing" type="button" class="btn btn-outline-primary btn-sm">Draw Models: OFF</button>
 							</div>
 						</div>
 
@@ -183,8 +196,31 @@
 							</div>
 						</div>
 					</div>
+					
+					<div id="testTab" style="display:none;" class="container m-0 p-0">
+						<div class="row m-0 p-0">
+							<div class="col m-0 p-0">
+								Enter Chromosome to Test: <br>
+								<textarea name="testChromosome" id="testChromosome" cols="80" rows="8" style="font-size: 8pt; font-family: 'Courier New', Courier, monospace;"></textarea>
+								<br><span id="testChromosomeInfo"></span>
+							</div>
+						</div>
+					</div>
+
+					<div id="playTab" style="display:none;" class="container m-0 p-0">
+						<div class="row m-0 p-0">
+							<div class="col m-0 p-0"></div>
+							<div class="col m-0 p-0">
+								<p>(↑) Arrow Up - move up</p>
+								<p>(↓) Arrow Down - move down</p>
+								<p>(←) Arrow Left - move left</p>
+								<p>(→) Arrow Right - move right</p>
+							</div>
+							<div class="col m-0 p-0"></div>
+						</div>
+					</div>
 				</div>
-				<div class="col">
+				<div class="col m-0 p-0">
 					<div class="container gameui">
 						<div class="row">
 							<div id="generation" class="col text-center"></div>

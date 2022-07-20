@@ -28,13 +28,17 @@ let population = POPS.population_20220718_001050_gen_109;
 //let population = GA.genPopulation(chroms_per_gen, total_bits);
 
 const snakeGame = new SnakeGame(500);
-const snakeGameGATest = new SnakeGameGATest(25, chromosome, bits_per_weight, num_inputs, num_hiddens, num_outputs);
+let snakeGameGATest = new SnakeGameGATest(25, chromosome, bits_per_weight, num_inputs, num_hiddens, num_outputs);
 const snakeGameGATrain = new SnakeGameGATrain(0, population, chroms_per_gen, bits_per_weight, num_inputs, num_hiddens, num_outputs);
 
 window.snakeGame = snakeGame;
 window.snakeGameGATest = snakeGameGATest;
 window.snakeGameGATrain = snakeGameGATrain;
 window.CHARTS = CHARTS;
+
+let isTraining = false;
+let isTesting = false;
+let isPlaying = false;
 
 GAME.state.onPhaseChange.push( function(phase) {
     switch (phase) {
@@ -46,6 +50,22 @@ GAME.state.onPhaseChange.push( function(phase) {
             break;
         case GAME.PHASES.LOAD_COMPLETED:
             console.log("load completed");
+
+            switchTab(false, true, false);
+            $("#testChromosome").val(chromosome);
+            $("#testChromosome").change( function () {
+                if ($(this).val().length == total_bits) {
+                    GAME.managers.releaseAllInstances();
+
+                    snakeGameGATest = new SnakeGameGATest(25, $(this).val(), bits_per_weight, num_inputs, num_hiddens, num_outputs);
+                
+                    $("#testChromosomeInfo").css("color", "#008800");
+                    $("#testChromosomeInfo").html("Accepted")
+                } else {
+                    $("#testChromosomeInfo").css("color", "#880000");
+                    $("#testChromosomeInfo").html("Denied")
+                }
+            })
 
             GAME.state.phase = GAME.PHASES.GAME_STARTED;
             break;
@@ -252,7 +272,7 @@ let trainingStarted = true;
 let drawModels = true;
 
 function train(redraw) {
-    if (!trainingStarted) { return; }
+    if (!trainingStarted || !isTraining) { return; }
 
     snakeGameGATrain.move_snake(keys);
     snakeGameGATrain.check_collisions();
@@ -263,26 +283,26 @@ function train(redraw) {
 
 GAME.callbacks.onUpdate = function(delta, elapsed) {
     
-    // if (snakeGame.elapsed == 0 || (elapsed - snakeGame.elapsed > snakeGame.delay)) {
-    //     snakeGame.elapsed = elapsed
+    if ( isPlaying && (snakeGame.elapsed == 0 || (elapsed - snakeGame.elapsed > snakeGame.delay)) ) {
+        snakeGame.elapsed = elapsed
 
-    //     snakeGame.move_snake(keys);
-    //     snakeGame.check_collisions();
-    //     snakeGame.draw_grid_updates();
+        snakeGame.move_snake(keys);
+        snakeGame.check_collisions();
+        snakeGame.draw_grid_updates();
 
-    //     keys.length = 0;
-    // }
+        keys.length = 0;
+    }
     
-    // if (snakeGameGATest.elapsed == 0 || (elapsed - snakeGameGATest.elapsed > snakeGameGATest.delay)) {
-    //     snakeGameGATest.elapsed = elapsed
+    if ( isTesting && (snakeGameGATest.elapsed == 0 || (elapsed - snakeGameGATest.elapsed > snakeGameGATest.delay)) ) {
+        snakeGameGATest.elapsed = elapsed
 
-    //     snakeGameGATest.move_snake(keys);
-    //     snakeGameGATest.check_collisions();
-    //     snakeGameGATest.update_frames_since_last_fruit();
-    //     snakeGameGATest.draw_grid_updates();
-    // }
+        snakeGameGATest.move_snake(keys);
+        snakeGameGATest.check_collisions();
+        snakeGameGATest.update_frames_since_last_fruit();
+        snakeGameGATest.draw_grid_updates();
+    }
     
-    if ( drawModels && (snakeGameGATrain.elapsed == 0 || (elapsed - snakeGameGATrain.elapsed > snakeGameGATrain.delay)) ) {
+    if ( isTraining && drawModels && (snakeGameGATrain.elapsed == 0 || (elapsed - snakeGameGATrain.elapsed > snakeGameGATrain.delay)) ) {
         snakeGameGATrain.elapsed = elapsed
 
         train(true);
@@ -296,9 +316,9 @@ GAME.callbacks.onKeyDown = function(event) {
 $("#startStopTraining").click(function () {
     trainingStarted = !trainingStarted;
     if (trainingStarted) {
-        $(this).html("Stop Training");
+        $(this).html("Training: OFF");
     } else {
-        $(this).html("Resume Training");
+        $(this).html("Training: ON");
     }
 });
 
@@ -319,5 +339,29 @@ $("#startStopDrawing").click(function () {
         intervalID = setInterval(train, 0);
     }
 });
+
+$("#trainButton").click(() => switchTab(true, false, false));
+$("#testButton").click(() => switchTab(false, true, false));
+$("#playButton").click(() => switchTab(false, false, true));
+
+function switchTab(tr, te, pl) {
+    $("#trainTab").hide();
+    $("#testTab").hide();
+    $("#playTab").hide();
+    
+    if (tr) {
+        $("#trainTab").show();
+    } else if (te) {
+        $("#testTab").show();
+    } else if (pl) {
+        $("#playTab").show();
+    }
+    
+    GAME.managers.releaseAllInstances();
+
+    isTraining = tr;
+    isTesting = te;
+    isPlaying = pl;
+}
 
 GAME.state.phase = GAME.PHASES.INIT;
