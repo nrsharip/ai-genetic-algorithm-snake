@@ -24,8 +24,8 @@ let num_outputs = 4;
 
 let chroms_per_gen = 200;
 let total_bits = ((num_inputs + 1) * num_hiddens + num_hiddens * (num_hiddens + 1) + num_outputs * (num_hiddens + 1)) * bits_per_weight;
-let population = POPS.population_20220718_001050_gen_109;
-//let population = GA.genPopulation(chroms_per_gen, total_bits);
+//let population = POPS.population_20220718_001050_gen_109;
+let population = GA.genPopulation(chroms_per_gen, total_bits);
 
 const snakeGame = new SnakeGame(500);
 let snakeGameGATest = new SnakeGameGATest(25, chromosome, bits_per_weight, num_inputs, num_hiddens, num_outputs);

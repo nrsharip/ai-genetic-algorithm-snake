@@ -139,7 +139,7 @@ const cfg8 = {
             },
             title: {
               display: true,
-              text: 'Best Parents (TOP-5 lasted longer up to current generation and sorted by average fitness)'
+              text: 'Best Parents (TOP-5 longest living chromosomes up to current generation and sorted by average fitness)'
             }
         }
     }

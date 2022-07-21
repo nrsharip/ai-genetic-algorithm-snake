@@ -2,7 +2,13 @@
 
 This is a port of [AI-for-Snake-Game](https://github.com/craighaber/AI-for-Snake-Game) (see [The AI for Snake Game Chronicles](https://craighaber.github.io/AI-for-Snake-Game/website_files/index.html) by [Craig Haber](https://github.com/craighaber)) from Python to Javascript.
 
-Following is the file mapping:
+## Screenshots
+
+<img src="docs/run.gif?raw=true" width="100%">
+
+## Development
+
+Following is the file map to [AI-for-Snake-Game](https://github.com/craighaber/AI-for-Snake-Game):
 
 - [`helpers/geneticAlgorithm.py`](https://github.com/craighaber/AI-for-Snake-Game/blob/master/helpers/geneticAlgorithm.py) ~> [`js/AI-for-Snake-Game/geneticAlgorithm.js`](https://github.com/nrsharip/ai-genetic-algorithm-snake/blob/main/js/AI-for-Snake-Game/geneticAlgorithm.js)
 - [`helpers/neuralNetwork.py`](https://github.com/craighaber/AI-for-Snake-Game/blob/master/helpers/neuralNetwork.py) ~> [`js/AI-for-Snake-Game/neuralNetwork.js`](https://github.com/nrsharip/ai-genetic-algorithm-snake/blob/main/js/AI-for-Snake-Game/neuralNetwork.js)
@@ -14,5 +20,3 @@ Following is the file mapping:
 - [`playSnakeGame.py`](https://github.com/craighaber/AI-for-Snake-Game/blob/master/playSnakeGame.py) ~> [`js/playSnakeGame.js`](https://github.com/nrsharip/ai-genetic-algorithm-snake/blob/main/js/playSnakeGame.js)
 - [`testTrainedAgents.py`](https://github.com/craighaber/AI-for-Snake-Game/blob/master/testTrainedAgents.py) ~> [`js/playSnakeGame.js`](https://github.com/nrsharip/ai-genetic-algorithm-snake/blob/main/js/playSnakeGame.js)
 - [`trainGeneticAlgorithm.py`](https://github.com/craighaber/AI-for-Snake-Game/blob/master/trainGeneticAlgorithm.py) ~> [`js/playSnakeGame.js`](https://github.com/nrsharip/ai-genetic-algorithm-snake/blob/main/js/playSnakeGame.js)
-
-<img src="docs/run.gif?raw=true" width="100%">
