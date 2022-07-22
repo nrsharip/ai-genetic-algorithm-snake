@@ -11,6 +11,7 @@ const cfg1 = {
     // https://www.chartjs.org/docs/3.8.0/samples/line/multi-axis.html
     options: {
         responsive: true,
+        animation: { duration: 0 },
         stacked: false,
         scales: {
           y: { type: 'linear', display: true, position: 'left', },
@@ -37,6 +38,7 @@ const cfg3 = {
     // https://www.chartjs.org/docs/3.8.0/samples/line/multi-axis.html
     options: {
         responsive: true,
+        animation: { duration: 0 },
         stacked: false,
         scales: {
           y: { type: 'linear', display: true, position: 'left', },
@@ -62,6 +64,7 @@ const cfg4 = {
     // https://www.chartjs.org/docs/3.8.0/samples/line/multi-axis.html
     options: {
         responsive: true,
+        animation: { duration: 0 },
         stacked: false,
         scales: {
           y: { type: 'linear', display: true, position: 'left', },
@@ -81,6 +84,7 @@ const cfg5 = {
     // https://www.chartjs.org/docs/3.8.0/samples/line/multi-axis.html
     options: {
         responsive: true,
+        animation: { duration: 0 },
         stacked: false,
         scales: {
           y: { type: 'linear', display: true, position: 'left', },
@@ -100,6 +104,7 @@ const cfg6 = {
     // https://www.chartjs.org/docs/3.8.0/samples/line/multi-axis.html
     options: {
         responsive: true,
+        animation: { duration: 0 },
         stacked: false,
         scales: {
           y: { type: 'linear', display: true, position: 'left', },
@@ -119,6 +124,7 @@ const cfg7 = {
     // https://www.chartjs.org/docs/3.8.0/samples/line/multi-axis.html
     options: {
         responsive: true,
+        animation: { duration: 0 },
         stacked: false,
         scales: {
           y: { type: 'linear', display: true, position: 'left', },
@@ -132,6 +138,7 @@ const cfg8 = {
     // https://www.chartjs.org/docs/3.8.0/samples/line/multi-axis.html
     options: {
         responsive: true,
+        animation: { duration: 0 },
         scales: { y: { type: 'linear', display: true, position: 'left', }, },
         plugins: {
             legend: {
@@ -151,6 +158,7 @@ const cfg9 = {
   // https://www.chartjs.org/docs/3.8.0/samples/line/multi-axis.html
   options: {
       responsive: true,
+      animation: { duration: 0 },
       scales: { y: { type: 'linear', display: true, position: 'left', }, },
       plugins: {
           legend: {
@@ -162,6 +170,35 @@ const cfg9 = {
           }
       }
   }
+};
+
+const cfg10 = {
+  type: 'scatter',
+  data: {
+    labels: [],
+    datasets: [
+      {
+          label: "0",
+          data: [],
+          backgroundColor: '#f3a935',
+      },
+    ]
+  },
+  options: {
+    responsive: true,
+    animation: { duration: 0 },
+    scales: { x: { beginAtZero: true, ticks: { stepSize: 1 } }, y: { beginAtZero: true, ticks: { stepSize: 1 } } },
+    plugins: {
+      legend: {
+        display: false, // disabling for now...
+        position: 'top',
+      },
+      title: {
+        display: true,
+        text: 'x: (this.score*2)**2, y: frame_score**1.5'
+      }
+    }
+  },
 };
 
 const data2 = [];
@@ -177,6 +214,7 @@ const cfg2 = {
     // https://www.chartjs.org/docs/3.8.0/samples/line/multi-axis.html
     options: {
         responsive: true,
+        animation: { duration: 0 },
         stacked: false,
         scales: {
           y: { type: 'linear', display: true, position: 'left', },
@@ -199,6 +237,7 @@ const chart6 = new Chart($("#chart6")[0].getContext('2d'), cfg6);
 const chart7 = new Chart($("#chart7")[0].getContext('2d'), cfg7);
 const chart8 = new Chart($("#chart8")[0].getContext('2d'), cfg8);
 const chart9 = new Chart($("#chart9")[0].getContext('2d'), cfg9);
+const chart10 = new Chart($("#chart10")[0].getContext('2d'), cfg10);
 
 export { 
     data1, cfg1, chart1,
@@ -210,4 +249,5 @@ export {
     data7, cfg7, chart7,
            cfg8, chart8,
            cfg9, chart9,
+           cfg10, chart10,
 }

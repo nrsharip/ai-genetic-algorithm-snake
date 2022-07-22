@@ -14,6 +14,10 @@ This is a port of [AI-for-Snake-Game](https://github.com/craighaber/AI-for-Snake
 
 <img src="docs/data.png?raw=true" width="100%">
 
+### [Pareto Fronts](https://en.wikipedia.org/wiki/Pareto_front)
+
+<img src="docs/pareto.png?raw=true" width="100%">
+
 ### File Map to [AI-for-Snake-Game](https://github.com/craighaber/AI-for-Snake-Game):
 
 - [`helpers/geneticAlgorithm.py`](https://github.com/craighaber/AI-for-Snake-Game/blob/master/helpers/geneticAlgorithm.py) ~> [`js/AI-for-Snake-Game/geneticAlgorithm.js`](https://github.com/nrsharip/ai-genetic-algorithm-snake/blob/main/js/AI-for-Snake-Game/geneticAlgorithm.js)

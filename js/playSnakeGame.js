@@ -80,7 +80,11 @@ GAME.state.onPhaseChange.push( function(phase) {
 
 const keys = []
 
+let max_2 = -Infinity;
+let max_1 = -Infinity;
 snakeGameGATrain.onGameOver = function(num_generations, cur_chrom, score, frames_alive, fitness) {
+    let cur_gen = snakeGameGATrain.num_generations;
+
     CHARTS.data1.push({ x: cur_chrom, score: score, frame_score: fitness.frame_score });
     CHARTS.cfg1.data.labels.push(cur_chrom);
     
@@ -91,11 +95,28 @@ snakeGameGATrain.onGameOver = function(num_generations, cur_chrom, score, frames
     CHARTS.data4.push({ x: cur_chrom, _3: fitness._3 });
     CHARTS.cfg4.data.labels.push(cur_chrom);
 
+    // CHART 10
+    if (fitness._3 > 0) {
+        CHARTS.cfg10.data.datasets[cur_gen].data.push({ x: fitness._1, y: fitness._2 });
+
+        if (max_1 < fitness._1) { 
+            max_1 = fitness._1; 
+            CHARTS.cfg10.options.scales.x.max = 1.3 * max_1;
+        }
+        if (max_2 < fitness._2) { 
+            max_2 = fitness._2;
+            CHARTS.cfg10.options.scales.y.max = 1.3 * max_2;
+            CHARTS.cfg10.options.scales.y.ticks.stepSize = Math.round((max_2 / 40) / 10) * 10;
+        }
+
+        CHARTS.chart10.update();
+    }
+
     CHARTS.chart1.update();
     CHARTS.chart3.update();
     CHARTS.chart4.update();
 
-    $("#generation").html(`GENERATION: ${snakeGameGATrain.num_generations}`);
+    $("#generation").html(`GENERATION: ${cur_gen}`);
     $("#chromosome").html(`CHROM: ${snakeGameGATrain.cur_chrom} / ${chroms_per_gen}`);
     $("#score").html(`SCORE: ${snakeGameGATrain.score}`);
     $("#high_score").html(`HIGHSCORE: ${snakeGameGATrain.high_score}`);
@@ -248,6 +269,13 @@ snakeGameGATrain.onGenerationOver = function(average_game_score, average_frame_s
     a.innerHTML = `${cur_gen}`;
     span = document.getElementById("downloadBestParents2").appendChild(document.createElement("span"));
     span.innerHTML = " • ";
+
+    // CHART 10
+    CHARTS.cfg10.data.datasets.push({ 
+        label: `${cur_gen}`, 
+        data: [], 
+        backgroundColor: palettes[palettes.counter++ % palettes.length] 
+    });
 
     CHARTS.chart5.update();
     CHARTS.chart6.update();
