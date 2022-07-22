@@ -29,7 +29,7 @@ let population = GA.genPopulation(chroms_per_gen, total_bits);
 
 const snakeGame = new SnakeGame(500);
 let snakeGameGATest = new SnakeGameGATest(25, chromosome, bits_per_weight, num_inputs, num_hiddens, num_outputs);
-const snakeGameGATrain = new SnakeGameGATrain(0, population, chroms_per_gen, bits_per_weight, num_inputs, num_hiddens, num_outputs);
+let snakeGameGATrain = new SnakeGameGATrain(0, population, chroms_per_gen, bits_per_weight, num_inputs, num_hiddens, num_outputs);
 
 window.snakeGame = snakeGame;
 window.snakeGameGATest = snakeGameGATest;
@@ -80,9 +80,11 @@ GAME.state.onPhaseChange.push( function(phase) {
 
 const keys = []
 
-let max_2 = -Infinity;
 let max_1 = -Infinity;
-snakeGameGATrain.onGameOver = function(num_generations, cur_chrom, score, frames_alive, fitness) {
+let max_2 = -Infinity;
+let max_score = -Infinity;
+let max_frame_score = -Infinity;
+function onGameOver(num_generations, cur_chrom, score, frames_alive, fitness) {
     let cur_gen = snakeGameGATrain.num_generations;
 
     CHARTS.data1.push({ x: cur_chrom, score: score, frame_score: fitness.frame_score });
@@ -112,6 +114,23 @@ snakeGameGATrain.onGameOver = function(num_generations, cur_chrom, score, frames
         CHARTS.chart10.update();
     }
 
+    // CHART 11
+    if (fitness._3 > 0) {
+        CHARTS.cfg11.data.datasets[cur_gen].data.push({ x: score, y: fitness.frame_score });
+
+        if (max_score < score) { 
+            max_score = score; 
+            CHARTS.cfg11.options.scales.x.max = 1.3 * max_score;
+        }
+        if (max_frame_score < fitness.frame_score) { 
+            max_frame_score = fitness.frame_score;
+            CHARTS.cfg11.options.scales.y.max = 1.3 * max_frame_score;
+            CHARTS.cfg11.options.scales.y.ticks.stepSize = Math.round((max_frame_score / 40) / 10) * 10;
+        }
+
+        CHARTS.chart11.update();
+    }
+
     CHARTS.chart1.update();
     CHARTS.chart3.update();
     CHARTS.chart4.update();
@@ -129,7 +148,7 @@ const palettes = [
 ]
 palettes.counter = 0;
 
-const bestParents = {
+const BestParents = {
     longest: 0,
     update(bps) {
         for (let i = 0; i < bps.length; i++) { 
@@ -144,9 +163,11 @@ const bestParents = {
         }
     }
 };
+let bestParents = Object.create(BestParents);
+
 window.bestParents = bestParents;
 
-snakeGameGATrain.onGenerationOver = function(average_game_score, average_frame_score, average_fitness, best_individual, fitnessRatios, fitnessRouletteCutoffs, bps) {
+function onGenerationOver(average_game_score, average_frame_score, average_fitness, best_individual, fitnessRatios, fitnessRouletteCutoffs, bps) {
     let cur_gen = snakeGameGATrain.num_generations;
     
     CHARTS.data1.length = 0
@@ -274,6 +295,13 @@ snakeGameGATrain.onGenerationOver = function(average_game_score, average_frame_s
     CHARTS.cfg10.data.datasets.push({ 
         label: `${cur_gen}`, 
         data: [], 
+        backgroundColor: palettes[palettes.counter % palettes.length] 
+    });
+
+    // CHART 11
+    CHARTS.cfg11.data.datasets.push({ 
+        label: `${cur_gen}`, 
+        data: [], 
         backgroundColor: palettes[palettes.counter++ % palettes.length] 
     });
 
@@ -295,6 +323,9 @@ snakeGameGATrain.onGenerationOver = function(average_game_score, average_frame_s
     span.innerHTML = " • ";
 
 }
+
+snakeGameGATrain.onGameOver = onGameOver;
+snakeGameGATrain.onGenerationOver = onGenerationOver;
 
 let trainingStarted = true;
 let drawModels = true;
@@ -385,6 +416,32 @@ $("#startStopDrawing").click(function () {
 
         intervalID = setInterval(train, 0);
     }
+});
+
+$("#populationFileInput").on("change", function() {
+    const reader = new FileReader();
+
+    $(reader).on("load", (event) => {
+        try {
+            let temp = JSON.parse(event.target.result.replaceAll("'","\""));
+            snakeGameGATrain = new SnakeGameGATrain(0, temp, chroms_per_gen, bits_per_weight, num_inputs, num_hiddens, num_outputs);
+            snakeGameGATrain.onGameOver = onGameOver;
+            snakeGameGATrain.onGenerationOver = onGenerationOver;
+
+            bestParents = Object.create(BestParents);
+            CHARTS.clearAll();
+        } catch (e) {
+            console.log(e);
+        }
+    });
+
+    reader.readAsText($(this)[0].files[0]);
+
+    $(this).val('');
+});
+
+$("#uploadPopulation").on("click", function() {
+    $("#populationFileInput").trigger("click");
 });
 
 $("#trainButton").click(() => switchTab(true, false, false));

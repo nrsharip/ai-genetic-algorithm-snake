@@ -14,9 +14,18 @@ This is a port of [AI-for-Snake-Game](https://github.com/craighaber/AI-for-Snake
 
 <img src="docs/data.png?raw=true" width="100%">
 
-### [Pareto Fronts](https://en.wikipedia.org/wiki/Pareto_front)
+### [Pareto Fronts](https://en.wikipedia.org/wiki/Pareto_front) and Scatter Charts
 
 <img src="docs/pareto.png?raw=true" width="100%">
+
+**Generation #4140:**
+
+<table>
+  <tr>
+    <td><img src="docs/scatter_4140_1.png?raw=true" width="100%"></td>
+    <td><img src="docs/scatter_4140_2.png?raw=true" width="100%"></td>
+  </tr>
+</table>
 
 ### File Map to [AI-for-Snake-Game](https://github.com/craighaber/AI-for-Snake-Game):
 

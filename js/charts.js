@@ -176,13 +176,7 @@ const cfg10 = {
   type: 'scatter',
   data: {
     labels: [],
-    datasets: [
-      {
-          label: "0",
-          data: [],
-          backgroundColor: '#f3a935',
-      },
-    ]
+    datasets: [{ label: "0", data: [], backgroundColor: '#f3a935' }],
   },
   options: {
     responsive: true,
@@ -190,12 +184,35 @@ const cfg10 = {
     scales: { x: { beginAtZero: true, ticks: { stepSize: 1 } }, y: { beginAtZero: true, ticks: { stepSize: 1 } } },
     plugins: {
       legend: {
-        display: false, // disabling for now...
+        //display: false, // disabling for now...
         position: 'top',
       },
       title: {
         display: true,
         text: 'x: (this.score*2)**2, y: frame_score**1.5'
+      }
+    }
+  },
+};
+
+const cfg11 = {
+  type: 'scatter',
+  data: {
+    labels: [],
+    datasets: [{ label: "0", data: [], backgroundColor: '#f3a935' }],
+  },
+  options: {
+    responsive: true,
+    animation: { duration: 0 },
+    scales: { x: { beginAtZero: true, ticks: { stepSize: 1 } }, y: { beginAtZero: true, ticks: { stepSize: 1 } } },
+    plugins: {
+      legend: {
+        //display: false, // disabling for now...
+        position: 'top',
+      },
+      title: {
+        display: true,
+        text: 'x: this.score, y: frame_score'
       }
     }
   },
@@ -238,8 +255,47 @@ const chart7 = new Chart($("#chart7")[0].getContext('2d'), cfg7);
 const chart8 = new Chart($("#chart8")[0].getContext('2d'), cfg8);
 const chart9 = new Chart($("#chart9")[0].getContext('2d'), cfg9);
 const chart10 = new Chart($("#chart10")[0].getContext('2d'), cfg10);
+const chart11 = new Chart($("#chart11")[0].getContext('2d'), cfg11);
+
+function clearAll() {
+    data1.length = 0;
+    cfg1.data.labels.length = 0;
+    data2.length = 0;
+    cfg2.data.labels.length = 0;
+    data3.length = 0;
+    cfg3.data.labels.length = 0;
+    data4.length = 0;
+    cfg4.data.labels.length = 0;
+    data5.length = 0;
+    cfg5.data.labels.length = 0;
+    data6.length = 0;
+    cfg6.data.labels.length = 0;
+    data7.length = 0;
+    cfg7.data.labels.length = 0;
+
+    cfg8.data.labels.length = 0;
+    cfg8.data.datasets.length = 0;
+    cfg9.data.labels.length = 0;
+    cfg9.data.datasets.length = 0;
+
+    cfg10.data.datasets = [{ label: "0", data: [], backgroundColor: '#f3a935' }];
+    cfg11.data.datasets = [{ label: "0", data: [], backgroundColor: '#f3a935' }];
+
+    chart1.update();
+    chart2.update();
+    chart3.update();
+    chart4.update();
+    chart5.update();
+    chart6.update();
+    chart7.update();
+    chart8.update();
+    chart9.update();
+    chart10.update();
+    chart11.update();
+}
 
 export { 
+    clearAll,
     data1, cfg1, chart1,
     data2, cfg2, chart2,
     data3, cfg3, chart3,
@@ -250,4 +306,5 @@ export {
            cfg8, chart8,
            cfg9, chart9,
            cfg10, chart10,
+           cfg11, chart11,
 }

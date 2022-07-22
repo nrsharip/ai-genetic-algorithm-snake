@@ -135,12 +135,19 @@
 							<div class="col m-0 p-0">
 								<button id="startStopDrawing" type="button" class="btn btn-outline-primary btn-sm">Draw Models: OFF</button>
 							</div>
+							<div class="col m-0 p-0">
+								<button id="uploadPopulation" type="button" class="btn btn-outline-primary btn-sm">Upload Population...</button>
+								<input type="file" id="populationFileInput" accept="text/plain" hidden>
+
+								<br><span style="font-size: 8pt;">e.g. try <a href="./population_4140.txt" download>population #4140</a></span> 
+							</div>
 						</div>
 
 						<div class="row m-0 p-0">
 							<div class="col m-0 p-0">
 								<canvas id="chart1" style="position: relative; width:40vw; height:20vh"></canvas>
 								<canvas id="chart3" style="position: relative; width:40vw; height:20vh"></canvas>
+								<canvas id="chart11" style="position: relative; width:40vw; height:60vh"></canvas>
 								<canvas id="chart10" style="position: relative; width:40vw; height:60vh"></canvas>
 								<canvas id="chart4" style="position: relative; width:40vw; height:20vh"></canvas>
 								<canvas id="chart5" style="position: relative; width:40vw; height:20vh"></canvas>
