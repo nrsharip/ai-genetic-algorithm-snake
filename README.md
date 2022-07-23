@@ -27,6 +27,17 @@ This is a port of [AI-for-Snake-Game](https://github.com/craighaber/AI-for-Snake
   </tr>
 </table>
 
+### Tries and Failures:
+
+**Generation #4140 (4152) CPG:200 BPW:8 I:9 H:10 O:4 failures:**
+
+<table>
+  <tr>
+    <td><img src="docs/failures_4152_1.gif?raw=true" width="100%"></td>
+    <td><img src="docs/failures_4152_2.gif?raw=true" width="100%"></td>
+  </tr>
+</table>
+
 ### File Map to [AI-for-Snake-Game](https://github.com/craighaber/AI-for-Snake-Game):
 
 - [`helpers/geneticAlgorithm.py`](https://github.com/craighaber/AI-for-Snake-Game/blob/master/helpers/geneticAlgorithm.py) ~> [`js/AI-for-Snake-Game/geneticAlgorithm.js`](https://github.com/nrsharip/ai-genetic-algorithm-snake/blob/main/js/AI-for-Snake-Game/geneticAlgorithm.js)
