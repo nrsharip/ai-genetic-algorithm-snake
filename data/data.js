@@ -27,10 +27,10 @@ const cfg1 = {
     animation: { duration: 0 },
     scales: {
       x: {
-        min: -1_000,
-        max: 40_000,
+        min: 0,
+        max: 82,
         ticks: {
-          stepSize: 100
+          stepSize: 2
         }
       },
       // x2: { // add extra axes
@@ -38,10 +38,10 @@ const cfg1 = {
       //   type: 'category'
       // },
       y: {
-        min: -20_000_000,
-        max: 600_000_000,
+        min: 0,
+        max: 2000,
         ticks: {
-          stepSize: 10_000_000
+          stepSize: 20
         },
       },
     },
@@ -67,9 +67,9 @@ let intervalID = -1;
 
 function plotGeneration() {
   data1.datasets[0].data.length = 0;
-  cfg1.options.plugins.title.text = `Generation: ${(generationNum % generations.length) * 10}`;
+  cfg1.options.plugins.title.text = `TOP-100 Best Fitness (x: score, y: frames alive). Generation: ${(generationNum % generations.length) * 10}`;
   for (let chromosome of generations[generationNum++ % generations.length]) {
-    data1.datasets[0].data.push({ x: chromosome[3], y: chromosome[4] });
+    data1.datasets[0].data.push({ x: chromosome[1], y: chromosome[2] });
   }
   myChart.update();
 
