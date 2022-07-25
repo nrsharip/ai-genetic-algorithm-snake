@@ -4,7 +4,7 @@ Try the following link: https://nrsharip.github.io/ai-genetic-algorithm-snake/
 
 This is a port of [AI-for-Snake-Game](https://github.com/craighaber/AI-for-Snake-Game) (see [The AI for Snake Game Chronicles](https://craighaber.github.io/AI-for-Snake-Game/website_files/index.html) by [Craig Haber](https://github.com/craighaber)) from Python to Javascript.
 
-**UPDATE:** Managed to reach the score of **79** by adjusting the criterias (see [RUN 2022-07-24 21:21:26](#run-2022-07-24-21-21-26)).
+**UPDATE:** Managed to reach the score of **79** by adjusting the criterias (see [RUN 2022-07-24 21:21:26](#run-2022-07-24-212126)).
 
 **NOTE:** To accelerate the training process use the [multiprocessing python version](https://github.com/nrsharip/AI-for-Snake-Game/blob/743f41a980c2336f65eefc065978109e8211dd6e/trainGeneticAlgorithmMulti.py).
 
