@@ -33,8 +33,8 @@ This is a port of [AI-for-Snake-Game](https://github.com/craighaber/AI-for-Snake
 
 <table>
   <tr>
-    <td><img src="docs/failures_4152_1.gif?raw=true" width="100%"></td>
-    <td><img src="docs/failures_4152_2.gif?raw=true" width="100%"></td>
+    <td><img src="docs/failures_20220712124030_gen4152_1.gif?raw=true" width="100%"></td>
+    <td><img src="docs/failures_20220712124030_gen4152_2.gif?raw=true" width="100%"></td>
   </tr>
 </table>
 

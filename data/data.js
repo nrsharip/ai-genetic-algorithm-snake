@@ -85,7 +85,7 @@ async function process() {
     while(fileExist) {
         let content;
         try {
-            content = await $.get(`./nrsharip_20220724175151_upd3/nrsharip_gen${generationNum}.txt`).fail(function() {
+            content = await $.get(`./nrsharip_20220724212126_upd3/nrsharip_gen${generationNum}.txt`).fail(function() {
                 fileExist = false;
             }).promise();
         } catch (e) {
@@ -106,7 +106,7 @@ async function process() {
     }
 
     generationNum = 0;
-    intervalID = setInterval(plotGeneration, 100);
+    intervalID = setInterval(plotGeneration, 50);
 }
 
 
