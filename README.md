@@ -87,7 +87,7 @@ Generation 4333 Best Game Score: 71
   </tr>
 </table>
 
-<img src="docs/best_20220724212126_gen4007_max_59.gif?raw=true" width="75%">
+<img src="docs/best_20220724212126_gen4007_max_59.gif?raw=true" width="50%">
 
 ### Tries and Failures
 
